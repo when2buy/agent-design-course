@@ -1,0 +1,25 @@
+// Content is stored in markdown files (content/ directory)
+// This DB only manages users and subscriptions
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 String    @id @default(cuid())
+  email              String    @unique
+  name               String?
+  passwordHash       String
+  role               String    @default("user") // "user" | "admin"
+  subscriptionStatus String    @default("free") // "free" | "pro"
+  subscriptionEndsAt DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@map("users")
+}

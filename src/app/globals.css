@@ -1,0 +1,157 @@
+@import "tailwindcss";
+@import "highlight.js/styles/github-dark.css";
+
+:root {
+  --background: #030712;
+  --foreground: #f9fafb;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Article content styles */
+.prose-custom {
+  color: #d1d5db;
+  line-height: 1.8;
+  font-size: 1rem;
+}
+
+.prose-custom h1 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.prose-custom h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #374151;
+}
+
+.prose-custom h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #93c5fd;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.prose-custom h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #d1d5db;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.prose-custom p {
+  color: #9ca3af;
+  line-height: 1.8;
+  margin: 0.75rem 0;
+}
+
+.prose-custom strong {
+  color: #f9fafb;
+  font-weight: 600;
+}
+
+.prose-custom em {
+  color: #d1d5db;
+  font-style: italic;
+}
+
+.prose-custom code {
+  background-color: #1f2937;
+  color: #93c5fd;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-family: 'Fira Code', 'Cascadia Code', monospace;
+}
+
+.prose-custom pre {
+  background-color: #111827;
+  border: 1px solid #374151;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  margin: 1.5rem 0;
+  overflow-x: auto;
+}
+
+.prose-custom pre code {
+  background: none;
+  color: #d1d5db;
+  padding: 0;
+  font-size: 0.875rem;
+}
+
+.prose-custom li {
+  margin: 0.375rem 0;
+  display: flex;
+  gap: 0.5rem;
+  color: #d1d5db;
+}
+
+.prose-custom table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+}
+
+.prose-custom tr {
+  border-bottom: 1px solid #374151;
+}
+
+.prose-custom td, .prose-custom th {
+  padding: 0.5rem 1rem;
+  color: #d1d5db;
+  text-align: left;
+}
+
+.prose-custom th {
+  color: #f9fafb;
+  font-weight: 600;
+  background-color: #1f2937;
+}
+
+.prose-custom blockquote {
+  border-left: 4px solid #3b82f6;
+  padding-left: 1rem;
+  margin: 1rem 0;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.prose-custom a {
+  color: #60a5fa;
+  text-decoration: underline;
+}
+
+.prose-custom a:hover {
+  color: #93c5fd;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #111827;
+}
+::-webkit-scrollbar-thumb {
+  background: #374151;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #4b5563;
+}
