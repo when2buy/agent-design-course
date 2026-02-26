@@ -11,15 +11,21 @@ datasource db {
 }
 
 model User {
-  id                 String    @id @default(cuid())
-  email              String    @unique
-  name               String?
-  passwordHash       String
-  role               String    @default("user") // "user" | "admin"
-  subscriptionStatus String    @default("free") // "free" | "pro"
-  subscriptionEndsAt DateTime?
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
+  id                   String    @id @default(cuid())
+  email                String    @unique
+  name                 String?
+  passwordHash         String
+  role                 String    @default("user")       // "user" | "admin"
+  subscriptionStatus   String    @default("free")       // "free" | "pro" | "cancelled"
+  subscriptionEndsAt   DateTime?
+
+  // Stripe fields
+  stripeCustomerId     String?   @unique                // cus_xxx
+  stripeSubscriptionId String?   @unique                // sub_xxx
+  stripePriceId        String?                          // price_xxx
+
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
 
   @@map("users")
 }

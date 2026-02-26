@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
+    "@stripe/stripe-js": "^8.8.0",
     "@types/bcryptjs": "^2.4.6",
     "bcryptjs": "^3.0.3",
     "gray-matter": "^4.0.3",
@@ -27,6 +28,7 @@
     "remark-gfm": "^4.0.1",
     "remark-html": "^16.0.1",
     "remark-rehype": "^11.1.2",
+    "stripe": "^20.4.0",
     "unified": "^11.0.5"
   },
   "devDependencies": {
