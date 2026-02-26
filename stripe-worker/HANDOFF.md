@@ -1,6 +1,23 @@
 # Stripe 支付集成 — 交接文档
 
-> 状态：代码已完成 ✅，等待 Steve 填入 Stripe Keys 后即可上线
+> 状态：**全部就绪 ✅ — Stripe 已配置，服务已上线**
+
+---
+
+## 当前配置（已填入 .env.production）
+
+| 变量 | 值 |
+|------|----|
+| `STRIPE_SECRET_KEY` | `sk_live_51NKYsPEUK...` (aitist.ai 账号) |
+| `STRIPE_PUBLISHABLE_KEY` | `pk_live_51NKYsPEUK...` |
+| `STRIPE_WEBHOOK_SECRET` | `whsec_Y5BnkazRuaj6...` (course 专属 endpoint) |
+| `STRIPE_PRICE_ID` | `price_1T5DiMEUKKyCFBFhGlUwZUP0` |
+
+产品：`prod_U3KNLtAsZ53eFi` — "AI Agent 设计课 Pro"  
+价格：¥299/年（CNY，recurring yearly）  
+Webhook Endpoint ID：`we_1T5DiZEUKKyCFBFhdOJDeukK`
+
+> ⚠️ Tunnel URL 会随重启变化，需同步更新 Stripe webhook endpoint URL
 
 ---
 
