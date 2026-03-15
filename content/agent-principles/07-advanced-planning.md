@@ -2,7 +2,7 @@
 title: "高级规划框架：ToT、Plan-and-Execute、LATS"
 excerpt: "超越 ReAct：Tree of Thought、Plan-and-Execute 等高级规划框架的原理与实现。"
 isPremium: true
-order: 2
+order: 7
 readingTime: 18
 tags: ["planning", "tot", "advanced"]
 ---

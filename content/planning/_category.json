@@ -1,6 +1,0 @@
-{
-  "name": "规划与推理",
-  "description": "ReAct、CoT、Tree of Thought 等推理框架",
-  "icon": "🗺️",
-  "order": 4
-}

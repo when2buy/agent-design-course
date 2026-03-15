@@ -2,7 +2,7 @@
 title: "多 Agent 系统架构"
 excerpt: "当单个 Agent 不够强大时，如何设计协作的多 Agent 系统。"
 isPremium: true
-order: 1
+order: 9
 readingTime: 16
 tags: ["multi-agent", "orchestration", "crewai"]
 video: "https://www.youtube.com/embed/dQw4w9WgXcQ"

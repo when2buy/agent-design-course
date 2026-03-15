@@ -19,7 +19,7 @@ export default async function LearnPage({
       <div className="mb-10">
         <h1 className="text-4xl font-bold text-white mb-3">课程内容</h1>
         <p className="text-gray-400">
-          系统学习 AI Agent 开发，从基础到生产部署
+          四大专题：MicroGPT · Agent 构建原则 · 设计模式 · 真实面试题库
           {!session && (
             <span className="ml-2 text-blue-400">
               — <Link href="/register" className="underline">免费注册</Link> 解锁免费内容
@@ -104,9 +104,24 @@ export default async function LearnPage({
                         </div>
                       </div>
                       <p className="text-gray-500 text-sm mb-3 leading-relaxed">{article.excerpt}</p>
-                      <div className="flex items-center gap-3 text-xs text-gray-600">
+                      <div className="flex items-center gap-3 text-xs text-gray-600 flex-wrap">
                         <span>⏱ {article.readingTime} 分钟</span>
-                        {article.tags.slice(0, 2).map((t) => (
+                        {article.series && (
+                          <span className="text-blue-500/70">📂 {article.series}</span>
+                        )}
+                        {article.company && (
+                          <span className="text-purple-400/70">🏢 {article.company}</span>
+                        )}
+                        {article.difficulty && (
+                          <span className={`px-1.5 py-0.5 rounded text-xs ${
+                            article.difficulty.includes('Hard')
+                              ? 'bg-red-500/10 text-red-400'
+                              : article.difficulty.includes('Medium')
+                              ? 'bg-yellow-500/10 text-yellow-400'
+                              : 'bg-green-500/10 text-green-400'
+                          }`}>{article.difficulty}</span>
+                        )}
+                        {!article.series && !article.company && article.tags.slice(0, 2).map((t) => (
                           <span key={t}>#{t}</span>
                         ))}
                       </div>

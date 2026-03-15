@@ -2,9 +2,10 @@
 title: "第四阶段：多智能体团队协作 (s09–s12)"
 excerpt: "从单兵作战到自组织团队：持久化队友、JSONL 邮箱通信、请求-响应协议、自主任务认领，最后用 git worktree 实现物理隔离。12 个机制的终点。"
 isPremium: true
-order: 4
+order: 5
 readingTime: 22
 tags: ["claude-code", "agent", "stage4", "multi-agent", "teams", "worktree"]
+series: "CLI Agent Pattern"
 ---
 
 # 第四阶段：从单兵到团队

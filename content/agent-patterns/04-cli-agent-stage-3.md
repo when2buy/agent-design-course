@@ -2,9 +2,10 @@
 title: "第三阶段：任务图与后台并发 (s07–s08)"
 excerpt: "把扁平待办升级为带依赖关系的持久化任务图，并引入守护线程让 Agent 在等待慢操作时继续思考。真正的工程级任务调度。"
 isPremium: false
-order: 3
+order: 4
 readingTime: 16
 tags: ["claude-code", "agent", "stage3", "tasks", "background", "dag"]
+series: "CLI Agent Pattern"
 ---
 
 # 第三阶段：走向工程化执行

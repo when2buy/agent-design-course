@@ -2,7 +2,7 @@
 title: "ReAct 框架：推理与行动的结合"
 excerpt: "掌握 ReAct 框架的原理，这是当今最广泛使用的 Agent 规划范式。"
 isPremium: false
-order: 1
+order: 6
 readingTime: 10
 tags: ["planning", "react", "reasoning"]
 video: "https://www.youtube.com/embed/dQw4w9WgXcQ"

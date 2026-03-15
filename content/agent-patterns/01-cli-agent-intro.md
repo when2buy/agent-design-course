@@ -2,9 +2,10 @@
 title: "专题介绍：从零构建微型 Claude Code 智能体"
 excerpt: "12 个渐进式章节，从一个 30 行的 while 循环出发，一路演进到多智能体自治协作系统。每个章节只加一个机制，每个机制都能独立理解。"
 isPremium: false
-order: 0
+order: 1
 readingTime: 8
 tags: ["claude-code", "agent", "tutorial", "intro"]
+series: "CLI Agent Pattern"
 ---
 
 # 从零构建微型 Claude Code：Bash is all you need

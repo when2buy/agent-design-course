@@ -2,9 +2,10 @@
 title: "第一阶段：基础循环与工具 (s01–s03)"
 excerpt: "从 30 行的 while 循环出发，理解 Agent 最底层的工作原理：核心循环、工具调度机制（dispatch map）以及任务规划（TodoWrite）。"
 isPremium: false
-order: 1
+order: 2
 readingTime: 15
 tags: ["claude-code", "agent", "stage1", "tools", "todo"]
+series: "CLI Agent Pattern"
 ---
 
 # 第一阶段：智能体的基石

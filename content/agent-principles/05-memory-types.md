@@ -2,7 +2,7 @@
 title: "Agent 记忆系统设计"
 excerpt: "构建高效的 Agent 记忆架构：工作记忆、情节记忆、语义记忆的设计与实现。"
 isPremium: true
-order: 1
+order: 5
 readingTime: 14
 tags: ["memory", "vector-db", "rag"]
 video: "https://www.youtube.com/embed/dQw4w9WgXcQ"

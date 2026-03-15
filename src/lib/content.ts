@@ -13,7 +13,7 @@ const CONTENT_DIR = path.join(process.cwd(), 'content')
 
 export interface ArticleMeta {
   slug: string
-  section: string          // directory name, e.g. "fundamentals"
+  section: string          // directory name, e.g. "microgpt"
   title: string
   excerpt: string
   isPremium: boolean
@@ -21,6 +21,9 @@ export interface ArticleMeta {
   readingTime: number
   tags: string[]
   video?: string           // YouTube / any embed URL
+  series?: string          // e.g. "CLI Agent Pattern"
+  company?: string         // for interview questions
+  difficulty?: string      // for interview questions e.g. "Medium-Hard"
   filePath: string
 }
 
@@ -93,6 +96,9 @@ export function getArticlesForSection(section: string): ArticleMeta[] {
         readingTime: data.readingTime ?? 5,
         tags: Array.isArray(data.tags) ? data.tags : [],
         video: data.video ?? undefined,
+        series: data.series ?? undefined,
+        company: data.company ?? undefined,
+        difficulty: data.difficulty ?? undefined,
         filePath,
       } as ArticleMeta
     })

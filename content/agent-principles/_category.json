@@ -1,0 +1,6 @@
+{
+  "name": "Agent Building Principles",
+  "description": "构建 Agent 的核心模式：Tool Use、MCP、Skill System、RAG、Memory、Planning，从原理到落地",
+  "icon": "🔩",
+  "order": 2
+}

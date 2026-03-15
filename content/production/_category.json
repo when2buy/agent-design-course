@@ -1,6 +1,0 @@
-{
-  "name": "生产部署",
-  "description": "将 Agent 部署到生产环境",
-  "icon": "🚀",
-  "order": 7
-}

@@ -2,9 +2,10 @@
 title: "第二阶段：上下文与知识管理 (s04–s06)"
 excerpt: "子智能体保持主对话干净，技能库按需加载知识，三层压缩解决上下文溢出。解决信息过载，让 Agent 在大型项目中保持清醒。"
 isPremium: false
-order: 2
+order: 3
 readingTime: 18
 tags: ["claude-code", "agent", "stage2", "context", "subagent", "skills"]
+series: "CLI Agent Pattern"
 ---
 
 # 第二阶段：保持清醒的大脑

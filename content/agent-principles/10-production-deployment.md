@@ -2,7 +2,7 @@
 title: "将 AI Agent 部署到生产环境"
 excerpt: "监控、扩展、成本控制——将 Agent 从原型变为可靠的生产服务。"
 isPremium: true
-order: 1
+order: 10
 readingTime: 20
 tags: ["production", "deployment", "monitoring", "docker"]
 video: "https://www.youtube.com/embed/dQw4w9WgXcQ"

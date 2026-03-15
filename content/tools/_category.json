@@ -1,6 +1,0 @@
-{
-  "name": "工具调用",
-  "description": "让 Agent 使用外部工具和 API",
-  "icon": "🔧",
-  "order": 2
-}

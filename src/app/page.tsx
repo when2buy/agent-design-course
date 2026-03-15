@@ -31,8 +31,8 @@ export default function HomePage() {
           </h1>
 
           <p className="text-gray-400 text-xl mb-10 max-w-3xl mx-auto leading-relaxed">
-            从基础概念到生产部署，系统学习如何构建真正智能的 AI Agent。
-            涵盖工具调用、记忆系统、多Agent架构、生产最佳实践。
+            从第一性原理到生产级系统设计，四大专题带你从原理到面试全覆盖。
+            MicroGPT · Agent 构建原则 · 设计模式 · 真实面试题库。
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -71,16 +71,16 @@ export default function HomePage() {
       {/* Features */}
       <section className="py-20 px-4 bg-gray-900/50">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-center text-white mb-4">为什么选择我们？</h2>
-          <p className="text-gray-400 text-center mb-12">专为工程师设计的 AI Agent 学习路径</p>
+          <h2 className="text-3xl font-bold text-center text-white mb-4">四大专题，全面覆盖</h2>
+          <p className="text-gray-400 text-center mb-12">专为 AI 工程师设计的系统化学习路径——从原理到面试，一站搞定</p>
           <div className="grid md:grid-cols-3 gap-6">
             {[
-              { icon: '🔒', title: '服务端内容保护', desc: 'Premium 内容在服务端严格验证，未订阅用户无法通过任何方式获取正文' },
-              { icon: '📝', title: 'Markdown 驱动内容', desc: '所有课程以 Markdown 文件存储，支持视频嵌入，添加新文章极其简单' },
-              { icon: '🚀', title: '生产级实践', desc: '不只是教原理，更包含监控、部署、成本控制等生产环境最佳实践' },
-              { icon: '🧠', title: '系统化学习路径', desc: '从基础到高级，循序渐进的课程结构，不走弯路' },
-              { icon: '🎬', title: '视频 + 图文', desc: '每篇文章可附带讲解视频，结合代码示例，学完即可动手实践' },
-              { icon: '🤝', title: '多框架覆盖', desc: '覆盖 LangChain、CrewAI、AutoGen、LlamaIndex 等主流框架' },
+              { icon: '🧬', title: 'MicroGPT：从第一性原理出发', desc: '不背公式，不堆术语。从 Token 到 Attention 到 Agent Loop，用最直觉的方式讲清楚 AI 的底层原理。' },
+              { icon: '🔩', title: 'Agent Building Principles', desc: 'Tool Use、MCP、Skill System、RAG、Memory、Planning——每个核心模式一篇深度文章，原理 + 代码 + 权衡。' },
+              { icon: '🏗️', title: 'Agent Design Patterns', desc: '类比传统 System Design：CLI Agent、Personal Assistant、Data Pipeline……每个 Pattern 对应真实工程场景。' },
+              { icon: '🎯', title: '真实面试题库（核心）', desc: '来自 OpenAI、Anthropic、Google DeepMind 的真实面试题，附完整设计方案与考官评分维度。拒绝刷题感，只讲真实考察。' },
+              { icon: '🔒', title: '内容服务端严格保护', desc: 'Premium 内容在服务端验证，未订阅用户无法通过任何客户端手段获取正文。' },
+              { icon: '🎬', title: '图文 + 视频双轨', desc: '每篇文章可附带讲解视频，结合代码示例，读完即可动手复现。' },
             ].map((f) => (
               <div key={f.title} className="bg-gray-800/50 border border-gray-700/50 rounded-xl p-6 hover:border-blue-500/30 transition-all group">
                 <div className="text-3xl mb-4">{f.icon}</div>
@@ -96,7 +96,7 @@ export default function HomePage() {
       <section className="py-20 px-4">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold text-center text-white mb-4">课程大纲</h2>
-          <p className="text-gray-400 text-center mb-12">{stats.sections} 大核心主题，{stats.total}+ 篇深度文章</p>
+          <p className="text-gray-400 text-center mb-12">{stats.sections} 大专题，{stats.total}+ 篇深度文章，{stats.free} 篇免费开放</p>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
             {sections.map((section) => (
               <Link
