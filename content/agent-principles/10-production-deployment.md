@@ -1,7 +1,7 @@
 ---
 title: "Deploying AI Agents to Production"
 excerpt: "Observability, resilience, cost control, and scaling — everything you need to take an agent from prototype to reliable production service."
-isPremium: true
+isPremium: false
 order: 10
 readingTime: 20
 tags: ["production", "deployment", "monitoring", "docker"]

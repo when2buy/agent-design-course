@@ -1,7 +1,7 @@
 ---
 title: "Advanced Planning: ToT, Plan-and-Execute, LATS"
 excerpt: "Beyond ReAct: Tree of Thought, Plan-and-Execute, and other advanced planning frameworks — principles, tradeoffs, and implementation."
-isPremium: true
+isPremium: false
 order: 7
 readingTime: 18
 tags: ["planning", "tot", "advanced"]

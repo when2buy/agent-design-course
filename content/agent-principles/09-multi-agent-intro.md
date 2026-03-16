@@ -1,7 +1,7 @@
 ---
 title: "Multi-Agent System Architecture"
 excerpt: "When a single agent isn't powerful enough — how to design collaborative multi-agent systems that divide, specialize, and conquer."
-isPremium: true
+isPremium: false
 order: 9
 readingTime: 16
 tags: ["multi-agent", "orchestration", "crewai"]

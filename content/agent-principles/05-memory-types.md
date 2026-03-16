@@ -1,7 +1,7 @@
 ---
 title: "Agent Memory System Design"
 excerpt: "Building an effective agent memory architecture: working memory, episodic memory, semantic memory — design patterns and implementation."
-isPremium: true
+isPremium: false
 order: 5
 readingTime: 14
 tags: ["memory", "vector-db", "rag"]

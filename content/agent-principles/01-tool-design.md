@@ -1,7 +1,7 @@
 ---
 title: "Tool Design Best Practices"
 excerpt: "How to design tools that agents can call reliably — naming, descriptions, parameter schemas, error handling, and safety."
-isPremium: true
+isPremium: false
 order: 1
 readingTime: 12
 tags: ["tools", "design", "function-calling"]

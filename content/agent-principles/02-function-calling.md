@@ -1,7 +1,7 @@
 ---
 title: "Function Calling Deep Dive"
 excerpt: "A side-by-side comparison of Function Calling implementations across OpenAI, Anthropic, and Gemini — with production best practices."
-isPremium: true
+isPremium: false
 order: 2
 readingTime: 15
 tags: ["tools", "function-calling", "openai", "claude"]
