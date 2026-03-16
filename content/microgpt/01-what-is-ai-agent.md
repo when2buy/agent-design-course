@@ -1,11 +1,10 @@
 ---
 title: "What is an AI Agent?"
-excerpt: "A deep dive into the definition, characteristics, and fundamental difference between an AI Agent and a plain LLM."
+excerpt: "A deep dive into the definition, characteristics, and fundamental difference between an AI Agent and a plain LLM. Includes an interactive MicroGPT lab where you train a real model in your browser."
 isPremium: false
 order: 1
 readingTime: 8
-tags: ["basics", "agent", "llm"]
-video: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+tags: ["basics", "agent", "llm", "interactive"]
 ---
 
 # What is an AI Agent?
@@ -67,6 +66,17 @@ result = agent.run("What is Tesla's current stock price? How much would 100 shar
 print(result)
 ```
 
+---
+
+## 🧪 Interactive Lab: Train a GPT in Your Browser
+
+Before learning how to *use* LLMs as agents, let's understand how they work under the hood.
+Andrej Karpathy wrote a 200-line pure Python script that implements the full GPT algorithm from scratch — no libraries.
+
+**[→ Open MicroGPT Interactive](/microgpt)** — tokenizer, softmax, attention heatmap, and a full training canvas where you can train a real GPT in your browser in ~10 seconds.
+
+---
+
 ## What's Next
 
-Now that you understand the core definition, the next article dives into the **Agent Loop** — the engine that makes autonomous execution possible.
+The next article dives into the **Agent Loop** — the engine that makes autonomous execution possible.
