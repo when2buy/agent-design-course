@@ -22,6 +22,9 @@ function useNodePositions() {
   const pos = useRef<Record<string, { x: number; y: number; w: number; h: number }>>({})
   const [tick, setTick] = useState(0)
   const update = useCallback((id: string, x: number, y: number, w: number, h: number) => {
+    const prev = pos.current[id]
+    // Only trigger re-render when position actually changes — prevents infinite loop
+    if (prev && prev.x === x && prev.y === y && prev.w === w && prev.h === h) return
     pos.current[id] = { x, y, w, h }
     setTick(t => t + 1)
   }, [])
@@ -54,13 +57,10 @@ function useDraggable(ix: number, iy: number, id: string, onPos: (id: string, x:
   useEffect(() => {
     if (ref.current) {
       const r = ref.current.getBoundingClientRect()
-      const container = ref.current.offsetParent as HTMLElement
-      if (container) {
-        const cr = container.getBoundingClientRect()
-        onPos(id, p.x, p.y, r.width, r.height)
-      }
+      onPos(id, p.x, p.y, r.width, r.height)
     }
-  })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [p.x, p.y, id])
 
   return { p, onMouseDown, ref }
 }
