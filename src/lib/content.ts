@@ -24,12 +24,15 @@ export interface ArticleMeta {
   series?: string          // e.g. "CLI Agent Pattern"
   company?: string         // for interview questions
   difficulty?: string      // for interview questions e.g. "Medium-Hard"
+  hasInteractive?: boolean // true = render React component instead of markdown
+  interactiveComponent?: string // component name, e.g. "TokenizerArticle"
   filePath: string
 }
 
 export interface Article extends ArticleMeta {
-  contentHtml: string      // rendered HTML (only when authorized)
-  rawContent: string       // raw markdown (never sent to client)
+  contentHtml: string           // rendered HTML (only when authorized)
+  rawContent: string            // raw markdown (never sent to client)
+  interactiveComponent?: string // component name for interactive articles
 }
 
 export interface Section {
@@ -99,6 +102,8 @@ export function getArticlesForSection(section: string): ArticleMeta[] {
         series: data.series ?? undefined,
         company: data.company ?? undefined,
         difficulty: data.difficulty ?? undefined,
+        hasInteractive: data.hasInteractive === true,
+        interactiveComponent: data.interactiveComponent ?? undefined,
         filePath,
       } as ArticleMeta
     })
@@ -161,6 +166,11 @@ export async function getArticle(slug: string): Promise<Article | null> {
     readingTime: data.readingTime ?? 5,
     tags: Array.isArray(data.tags) ? data.tags : [],
     video: data.video ?? undefined,
+    series: data.series ?? undefined,
+    company: data.company ?? undefined,
+    difficulty: data.difficulty ?? undefined,
+    hasInteractive: data.hasInteractive === true,
+    interactiveComponent: data.interactiveComponent ?? undefined,
     filePath: found.filePath,
     contentHtml,
     rawContent: content, // ⚠️ never send to client

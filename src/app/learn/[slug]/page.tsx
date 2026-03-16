@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { auth } from '@/lib/auth'
 import { getArticle, findArticleFile, getArticlesForSection, getAllSections } from '@/lib/content'
+import InteractiveArticleRenderer from '@/components/microgpt/InteractiveArticleRenderer'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,26 +14,22 @@ export default async function ArticlePage({
   const { slug } = await params
   const session = await auth()
 
-  // ✅ SERVER-SIDE: find file first (no content loaded yet)
   const found = findArticleFile(slug)
   if (!found) notFound()
 
-  // Load full article only when needed for auth decision
   const article = await getArticle(slug)
   if (!article) notFound()
 
   const isPro = session?.user?.subscriptionStatus === 'pro'
   const canRead = !article.isPremium || isPro
 
-  // Get section info
   const sections = getAllSections()
   const section = sections.find((s) => s.slug === article.section)
 
-  // Get next article
   const sectionArticles = getArticlesForSection(article.section)
   const nextArticle = sectionArticles.find((a) => a.order > article.order) ?? null
+  const prevArticle = [...sectionArticles].reverse().find((a) => a.order < article.order) ?? null
 
-  // Count premium articles for paywall messaging
   const premiumCount = sections.flatMap((s) => s.articles).filter((a) => a.isPremium).length
 
   return (
@@ -49,12 +46,12 @@ export default async function ArticlePage({
             <span>/</span>
           </>
         )}
-        <span className="text-gray-400 truncate">{article.title}</span>
+        <span className="text-gray-400 truncate max-w-xs">{article.title}</span>
       </nav>
 
-      {/* Article Header */}
+      {/* Header */}
       <div className="mb-8">
-        <div className="flex items-center gap-3 mb-4">
+        <div className="flex flex-wrap items-center gap-3 mb-4">
           {article.isPremium ? (
             <span className="text-xs bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 text-yellow-400 px-3 py-1 rounded-full font-medium">
               ✨ PRO
@@ -65,94 +62,95 @@ export default async function ArticlePage({
             </span>
           )}
           <span className="text-gray-500 text-sm">⏱ {article.readingTime} min read</span>
+          {article.hasInteractive && (
+            <span className="text-xs bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 px-3 py-1 rounded-full">
+              ⚡ Interactive
+            </span>
+          )}
           {article.video && (
             <span className="text-xs text-purple-400 bg-purple-500/10 border border-purple-500/20 px-2 py-0.5 rounded-full">
-              🎬 Video included
+              🎬 Video
             </span>
           )}
           {article.difficulty && (
             <span className={`text-xs px-2 py-0.5 rounded-full border ${
               article.difficulty.includes('Hard')
                 ? 'bg-red-500/10 border-red-500/20 text-red-400'
-                : article.difficulty.includes('Medium')
-                ? 'bg-yellow-500/10 border-yellow-500/20 text-yellow-400'
-                : 'bg-green-500/10 border-green-500/20 text-green-400'
+                : 'bg-yellow-500/10 border-yellow-500/20 text-yellow-400'
             }`}>{article.difficulty}</span>
           )}
         </div>
 
         <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">{article.title}</h1>
         <p className="text-gray-400 text-lg leading-relaxed">{article.excerpt}</p>
-
         {article.company && (
           <p className="text-sm text-purple-400/80 mt-2">🏢 {article.company}</p>
         )}
-
         <div className="flex flex-wrap gap-2 mt-4">
           {article.tags.map((tag) => (
-            <span key={tag} className="text-xs text-gray-600 bg-gray-800 px-2 py-1 rounded">
-              #{tag}
-            </span>
+            <span key={tag} className="text-xs text-gray-600 bg-gray-800 px-2 py-1 rounded">#{tag}</span>
           ))}
         </div>
       </div>
 
-      <hr className="border-gray-700 mb-8" />
+      <hr className="border-gray-700 mb-10" />
 
-      {/* ✅ SERVER-SIDE PROTECTION */}
+      {/* ── Content: gated by auth ── */}
       {canRead ? (
         <>
-          {/* Video embed (if present) */}
+          {/* Video embed */}
           {article.video && (
             <div className="mb-10 rounded-xl overflow-hidden border border-gray-700 bg-black aspect-video">
-              <iframe
-                src={article.video}
-                className="w-full h-full"
+              <iframe src={article.video} className="w-full h-full"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                title={`Video: ${article.title}`}
-              />
+                allowFullScreen title={`Video: ${article.title}`} />
             </div>
           )}
 
-          {/* Article content — rendered from markdown, syntax highlighted */}
-          <div
-            className="prose-custom"
-            dangerouslySetInnerHTML={{ __html: article.contentHtml }}
-          />
+          {/* Interactive article component OR markdown */}
+          {article.hasInteractive && article.interactiveComponent ? (
+            <InteractiveArticleRenderer componentName={article.interactiveComponent} />
+          ) : (
+            <div className="prose-custom"
+              dangerouslySetInnerHTML={{ __html: article.contentHtml }} />
+          )}
 
-          {/* Next Article */}
-          {nextArticle && (
-            <div className="mt-14 pt-8 border-t border-gray-800">
-              <p className="text-gray-500 text-sm mb-2">Up next</p>
-              <Link
-                href={`/learn/${nextArticle.slug}`}
-                className="group flex items-center justify-between bg-gray-800/50 border border-gray-700 rounded-xl p-5 hover:border-blue-500/50 transition-all"
-              >
-                <div className="flex items-center gap-3">
-                  {nextArticle.video && <span className="text-purple-400 text-sm">🎬</span>}
-                  <span className="font-semibold text-white group-hover:text-blue-400 transition-colors">
-                    {nextArticle.title}
+          {/* Article navigation */}
+          <div className="mt-14 pt-8 border-t border-gray-800 grid grid-cols-2 gap-4">
+            <div>
+              {prevArticle && (
+                <Link href={`/learn/${prevArticle.slug}`}
+                  className="group flex flex-col bg-gray-800/40 border border-gray-700 rounded-xl p-4 hover:border-indigo-500/40 transition-all">
+                  <span className="text-xs text-gray-600 mb-1">← Previous</span>
+                  <span className="font-medium text-white group-hover:text-indigo-400 transition-colors text-sm">
+                    {prevArticle.title}
                   </span>
-                  {nextArticle.isPremium && (
-                    <span className="text-xs text-yellow-400 bg-yellow-500/10 px-2 py-0.5 rounded-full border border-yellow-500/20">PRO</span>
-                  )}
-                </div>
-                <span className="text-gray-500 group-hover:text-blue-400 transition-colors text-lg">→</span>
-              </Link>
+                </Link>
+              )}
             </div>
-          )}
+            <div>
+              {nextArticle && (
+                <Link href={`/learn/${nextArticle.slug}`}
+                  className="group flex flex-col bg-gray-800/40 border border-gray-700 rounded-xl p-4 hover:border-indigo-500/40 transition-all text-right">
+                  <span className="text-xs text-gray-600 mb-1">Next →</span>
+                  <span className="font-medium text-white group-hover:text-indigo-400 transition-colors text-sm">
+                    {nextArticle.title}
+                    {nextArticle.isPremium && <span className="ml-2 text-yellow-400 text-xs">PRO</span>}
+                  </span>
+                </Link>
+              )}
+            </div>
+          </div>
         </>
       ) : (
-        /* 🔒 PAYWALL — zero content bytes sent to client */
+        /* 🔒 Paywall */
         <div className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 border border-gray-600 rounded-2xl p-8 text-center">
           <div className="text-5xl mb-5">🔒</div>
           <h2 className="text-2xl font-bold text-white mb-3">Pro Members Only</h2>
           <p className="text-gray-400 mb-8 max-w-md mx-auto">
             Upgrade to Pro to unlock all {premiumCount}+ premium articles,
-            including video walkthroughs, complete code examples, and production guides.
+            video walkthroughs, complete code examples, and production guides.
           </p>
-
           {!session ? (
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link href="/register" className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-xl font-semibold transition-all">
@@ -167,12 +165,10 @@ export default async function ArticlePage({
               Upgrade to Pro ✨
             </Link>
           )}
-
           <p className="text-gray-600 text-sm mt-5">Annual subscription · Cancel anytime</p>
         </div>
       )}
 
-      {/* Back */}
       <div className="mt-10">
         <Link href="/learn" className="text-gray-500 hover:text-gray-300 text-sm transition-colors">
           ← Back to curriculum
