@@ -24,7 +24,7 @@ export default function RegisterPage() {
     const data = await res.json()
 
     if (!res.ok) {
-      setError(data.error || '注册失败')
+      setError(data.error || 'Registration failed. Please try again.')
       setLoading(false)
       return
     }
@@ -44,26 +44,26 @@ export default function RegisterPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <span className="text-5xl">🚀</span>
-          <h1 className="text-2xl font-bold text-white mt-4">开始学习之旅</h1>
-          <p className="text-gray-400 mt-2">免费注册，立即访问基础课程</p>
+          <h1 className="text-2xl font-bold text-white mt-4">Start your learning journey</h1>
+          <p className="text-gray-400 mt-2">Free account · Access free content instantly</p>
         </div>
 
         <div className="bg-gray-800/50 border border-gray-700 rounded-2xl p-8">
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">姓名</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Name</label>
               <input
                 type="text"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 required
                 className="w-full bg-gray-900 border border-gray-600 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
-                placeholder="你的名字"
+                placeholder="Your name"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">邮箱</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
               <input
                 type="email"
                 value={form.email}
@@ -75,7 +75,7 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">密码</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Password</label>
               <input
                 type="password"
                 value={form.password}
@@ -83,7 +83,7 @@ export default function RegisterPage() {
                 required
                 minLength={6}
                 className="w-full bg-gray-900 border border-gray-600 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
-                placeholder="至少 6 位"
+                placeholder="At least 6 characters"
               />
             </div>
 
@@ -98,19 +98,19 @@ export default function RegisterPage() {
               disabled={loading}
               className="w-full bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white py-3 rounded-xl font-semibold transition-all"
             >
-              {loading ? '注册中...' : '免费注册'}
+              {loading ? 'Creating account...' : 'Create Free Account'}
             </button>
           </form>
 
           <p className="text-center text-gray-500 text-sm mt-6">
-            已有账号？{' '}
+            Already have an account?{' '}
             <Link href="/login" className="text-blue-400 hover:text-blue-300">
-              立即登录
+              Sign in
             </Link>
           </p>
 
           <p className="text-xs text-gray-600 text-center mt-4">
-            注册即代表同意我们的服务条款和隐私政策
+            By signing up you agree to our Terms of Service and Privacy Policy.
           </p>
         </div>
       </div>

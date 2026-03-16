@@ -1,6 +1,6 @@
 ---
-title: "多 Agent 系统架构"
-excerpt: "当单个 Agent 不够强大时，如何设计协作的多 Agent 系统。"
+title: "Multi-Agent System Architecture"
+excerpt: "When a single agent isn't powerful enough — how to design collaborative multi-agent systems that divide, specialize, and conquer."
 isPremium: true
 order: 9
 readingTime: 16
@@ -8,28 +8,28 @@ tags: ["multi-agent", "orchestration", "crewai"]
 video: "https://www.youtube.com/embed/dQw4w9WgXcQ"
 ---
 
-# 多 Agent 系统架构
+# Multi-Agent System Architecture
 
-## 为什么需要多 Agent？
+## Why Multi-Agent?
 
-单个 Agent 存在天然限制：
-- **上下文长度**：复杂任务的历史无法放入单个 context
-- **专业化**：一个 Agent 难以同时精通代码、写作、研究、分析
-- **并行效率**：有些子任务可以并行执行
-- **可靠性**：多个 Agent 相互检验，减少错误
+Single agents have natural limits:
+- **Context length**: Complex task histories don't fit in one context window
+- **Specialization**: One agent can't simultaneously excel at coding, writing, research, and analysis
+- **Parallelism**: Some subtasks can run concurrently
+- **Reliability**: Multiple agents cross-checking each other reduces errors
 
-## 三种多 Agent 架构
+## Three Multi-Agent Architectures
 
-### 1. 层级架构（Hierarchical）
+### 1. Hierarchical
 
 ```
          ┌─────────────┐
-         │  Orchestrator│ ← 分解任务、分配工作
+         │ Orchestrator │ ← decomposes tasks, delegates work
          └──────┬──────┘
       ┌─────────┼─────────┐
       ↓         ↓         ↓
  [Research]  [Writing]  [Review]
-  Agent       Agent      Agent
+   Agent       Agent      Agent
 ```
 
 ```python
@@ -45,92 +45,54 @@ class OrchestratorAgent:
         return self._synthesize(goal, results)
 
     def _route(self, task: str) -> str:
-        """路由：决定由哪个 Agent 处理"""
-        prompt = f"任务: {task}\n可用 Agent: {list(self.sub_agents.keys())}\n选择最合适的 Agent（仅返回名称）:"
+        """Decide which sub-agent handles this task."""
+        prompt = f"Task: {task}\nAvailable agents: {list(self.sub_agents.keys())}\nPick the best agent (return name only):"
         return self.llm.complete(prompt).strip()
 ```
 
-### 2. 协作架构（Collaborative）
+### 2. Collaborative
 
-Agent 之间通过消息总线通信：
+Agents communicate through a message bus:
 
 ```python
 class CollaborativeSystem:
     async def run(self, goal: str) -> str:
         self.message_bus.publish("task", {"goal": goal})
 
-        while not self._is_complete():
-            message = await self.message_bus.get_next()
-            for agent_name, agent in self.agents.items():
-                if agent.should_respond(message):
-                    response = await agent.process(message)
-                    self.message_bus.publish(agent_name, response)
+        # Agents subscribe and self-assign
+        results = await asyncio.gather(*[
+            agent.listen_and_work(self.message_bus)
+            for agent in self.agents
+        ])
 
-        return self._compile_result()
+        return self._aggregate(results)
 ```
 
-### 3. 流水线架构（Pipeline）
+### 3. Competitive (LLM-as-Judge)
 
-```
-Input → [Research] → [Analyze] → [Write] → Output
-```
-
-最简单，适合有明确顺序的任务。
-
-## 使用 CrewAI 构建多 Agent 系统
+Multiple agents propose solutions; a judge selects the best:
 
 ```python
-from crewai import Agent, Task, Crew, Process
+class CompetitiveSystem:
+    def run(self, goal: str) -> str:
+        proposals = [agent.propose(goal) for agent in self.agents]
 
-researcher = Agent(
-    role="研究员",
-    goal="深度研究指定主题，收集全面信息",
-    backstory="经验丰富的研究员，擅长从多源获取准确信息",
-    tools=[search_tool, web_scraper],
-    llm="gpt-4o"
-)
+        judge_prompt = f"""
+Goal: {goal}
+Proposals:
+{format_proposals(proposals)}
 
-writer = Agent(
-    role="写作专家",
-    goal="将分析结果整理成高质量报告",
-    backstory="技术写作专家，能将复杂信息转化为清晰文档",
-    llm="gpt-4o"
-)
-
-research_task = Task(
-    description="研究 AI Agent 在金融行业的应用现状",
-    agent=researcher,
-    expected_output="详细研究报告，包含至少10个具体案例"
-)
-
-writing_task = Task(
-    description="撰写完整行业报告",
-    agent=writer,
-    expected_output="3000字专业报告",
-    context=[research_task]  # 依赖研究任务的结果
-)
-
-crew = Crew(
-    agents=[researcher, writer],
-    tasks=[research_task, writing_task],
-    process=Process.sequential,
-    verbose=True
-)
-
-result = crew.kickoff(inputs={"topic": "AI Agent in Finance"})
+Select the best proposal and explain why:
+"""
+        verdict = self.judge_llm.complete(judge_prompt)
+        return extract_winner(verdict, proposals)
 ```
 
-## 多 Agent 通信协议
+## Choosing the Right Architecture
 
-```python
-from pydantic import BaseModel
-from typing import Literal
-
-class AgentMessage(BaseModel):
-    sender: str
-    receiver: str            # "*" 表示广播
-    message_type: Literal["request", "response", "broadcast", "error"]
-    content: str
-    metadata: dict = {}
-    correlation_id: str      # 用于追踪请求-响应对
-```
+| Scenario | Architecture |
+|----------|--------------|
+| Clear task decomposition | Hierarchical |
+| Collaborative creative work | Collaborative |
+| High-stakes decisions | Competitive |
+| Research + synthesis | Hierarchical + Collaborative hybrid |

@@ -1,25 +1,25 @@
 ---
-title: "RAG for Agents：检索增强的正确打开方式"
-excerpt: "把 RAG 接入 Agent 不是把向量库挂上去就完事——本文讲清楚 Naive RAG 的问题、Advanced RAG 的改进，以及 Agentic RAG 如何让检索本身也变成一个可规划的行动。"
+title: "RAG for Agents: Retrieval-Augmented Generation Done Right"
+excerpt: "Bolting a vector database onto an agent is not enough. This article explains Naive RAG's failure modes, Advanced RAG's fixes, and how Agentic RAG turns retrieval itself into a plannable action."
 isPremium: false
 order: 8
 readingTime: 16
 tags: ["rag", "vector-db", "retrieval", "embedding"]
 ---
 
-# RAG for Agents：检索增强的正确打开方式
+# RAG for Agents: Retrieval-Augmented Generation Done Right
 
-> 🚧 **内容即将上线** — 本文正在撰写中，敬请期待。
+> 🚧 **Coming soon** — This article is being written. Check back shortly!
 
-## 预告内容
+## What's Inside
 
-- Naive RAG 的三大痛点：召回不准、切片错误、Context Pollution
-- Advanced RAG：HyDE、多路召回、Reranker
-- Agentic RAG：让 Agent 自己决定"要不要检索、检索什么"
-- 向量数据库选型：Pinecone / Qdrant / pgvector 横向对比
-- Embedding 模型选择与多语言支持
-- 实战：为 Agent 实现一个文档知识库工具
+- The three failure modes of Naive RAG: poor recall, bad chunking, context pollution
+- Advanced RAG: HyDE, multi-vector retrieval, re-ranking
+- Agentic RAG: letting the agent decide *whether* and *what* to retrieve
+- Vector database comparison: Pinecone vs Qdrant vs pgvector
+- Choosing and evaluating embedding models for multilingual content
+- Hands-on: build a document knowledge base tool for your agent
 
 ---
 
-*想优先看到这篇文章？在下方留言告诉我们！*
+*Want this article sooner? Let us know in the comments!*

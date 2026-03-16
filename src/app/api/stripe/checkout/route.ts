@@ -7,14 +7,14 @@ import { prisma } from '@/lib/db'
 export async function POST(req: NextRequest) {
   const session = await auth()
   if (!session?.user) {
-    return NextResponse.json({ error: '请先登录' }, { status: 401 })
+    return NextResponse.json({ error: 'Please sign in first' }, { status: 401 })
   }
 
   const user = await prisma.user.findUnique({ where: { id: session.user.id } })
-  if (!user) return NextResponse.json({ error: '用户不存在' }, { status: 404 })
+  if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
   if (user.subscriptionStatus === 'pro') {
-    return NextResponse.json({ error: '已是 Pro 会员' }, { status: 400 })
+    return NextResponse.json({ error: 'Already a Pro member' }, { status: 400 })
   }
 
   const baseUrl = process.env.NEXTAUTH_URL ?? 'http://localhost:3000'

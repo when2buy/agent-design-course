@@ -23,7 +23,7 @@ export default function LoginPage() {
     })
 
     if (result?.error) {
-      setError('邮箱或密码错误')
+      setError('Incorrect email or password.')
       setLoading(false)
     } else {
       router.push('/dashboard')
@@ -36,14 +36,14 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <span className="text-5xl">🤖</span>
-          <h1 className="text-2xl font-bold text-white mt-4">欢迎回来</h1>
-          <p className="text-gray-400 mt-2">登录你的账号</p>
+          <h1 className="text-2xl font-bold text-white mt-4">Welcome back</h1>
+          <p className="text-gray-400 mt-2">Sign in to your account</p>
         </div>
 
         <div className="bg-gray-800/50 border border-gray-700 rounded-2xl p-8">
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">邮箱</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
               <input
                 type="email"
                 value={email}
@@ -55,7 +55,7 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">密码</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Password</label>
               <input
                 type="password"
                 value={password}
@@ -77,19 +77,19 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white py-3 rounded-xl font-semibold transition-all"
             >
-              {loading ? '登录中...' : '登录'}
+              {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
 
           <p className="text-center text-gray-500 text-sm mt-6">
-            还没有账号？{' '}
+            Don&apos;t have an account?{' '}
             <Link href="/register" className="text-blue-400 hover:text-blue-300">
-              免费注册
+              Sign up free
             </Link>
           </p>
 
           <div className="mt-4 p-3 bg-gray-900/50 rounded-lg text-xs text-gray-500 text-center">
-            测试账号：<code className="text-blue-400">pro@demo.com</code> / <code className="text-blue-400">demo123</code>
+            Demo: <code className="text-blue-400">pro@demo.com</code> / <code className="text-blue-400">demo123</code>
           </div>
         </div>
       </div>

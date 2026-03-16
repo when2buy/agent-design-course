@@ -1,253 +1,239 @@
-# 内容贡献指南 — 如何通过 Markdown 添加新内容
+# Content Contribution Guide — Adding Articles via Markdown
 
-本项目的所有课程内容都以 **Markdown 文件**形式存储在 `content/` 目录下，无需修改任何代码即可新增文章或章节。
+All course content is stored as **Markdown files** in the `content/` directory. No code changes needed to add articles or sections.
 
 ---
 
-## 目录结构
+## Directory Structure
 
 ```
 content/
-├── fundamentals/          ← 章节目录（section）
-│   ├── _category.json     ← 章节元信息（必须存在）
+├── microgpt/              ← section directory
+│   ├── _category.json     ← section metadata (required)
 │   ├── 01-what-is-ai-agent.md
 │   └── 02-agent-loop.md
-├── tools/
+├── agent-principles/
 │   ├── _category.json
-│   ├── 01-tool-design.md
-│   └── 02-function-calling.md
-├── planning/
-│   ├── _category.json
-│   └── 01-react-framework.md
-├── memory/
-├── multi-agent/
-└── production/
+│   └── 01-tool-design.md
+...
 ```
 
 ---
 
-## 一、给现有章节添加新文章
+## 1. Adding an Article to an Existing Section
 
-### 第一步：确定文件名
+### Step 1: Choose a filename
 
-文件命名格式为 `{序号}-{slug}.md`，序号决定文章在章节内的排列顺序：
+Format: `{order}-{slug}.md` — the order number controls position within the section:
 
 ```
-02-agent-loop.md      ← 第 2 篇
-03-my-new-article.md  ← 新加第 3 篇
+01-what-is-ai-agent.md    ← 1st article
+02-agent-loop.md          ← 2nd article
+03-my-new-article.md      ← new 3rd article
 ```
 
-> **规则：** 序号从 `01` 开始，前面补零，slug 用小写英文和连字符。
+> **Rule:** numbers start at `01`, zero-padded; slugs use lowercase letters and hyphens.
 
-### 第二步：编写文章文件
+### Step 2: Write the article file
 
-在对应章节目录下新建 `.md` 文件，文件开头必须包含 **Frontmatter**（YAML 格式的元信息块）：
+Create a `.md` file in the target section directory. It must start with a **Frontmatter** block (YAML):
 
 ```markdown
 ---
-title: "你的文章标题"
-excerpt: "一句话简介，显示在文章列表卡片上。"
+title: "Your Article Title"
+excerpt: "One-sentence description shown on the article card."
 isPremium: false
 order: 3
 readingTime: 10
 tags: ["tag1", "tag2"]
-video: "https://www.youtube.com/embed/VIDEO_ID"
 ---
 
-# 文章正文从这里开始
-
-...
+# Article body starts here
 ```
 
-### Frontmatter 字段说明
+### Frontmatter Fields
 
-| 字段 | 类型 | 必填 | 说明 |
-|------|------|------|------|
-| `title` | string | ✅ | 文章标题，显示在页面和导航栏 |
-| `excerpt` | string | ✅ | 简短描述，显示在文章列表 |
-| `isPremium` | boolean | ✅ | `true` = 付费内容；`false` = 免费 |
-| `order` | number | ✅ | 章节内排序，数字越小越靠前 |
-| `readingTime` | number | 推荐 | 预计阅读时间（分钟） |
-| `tags` | string[] | 推荐 | 标签数组，用于分类过滤 |
-| `video` | string | 可选 | YouTube 嵌入链接（`/embed/` 格式） |
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `title` | string | ✅ | Article title shown in the page header and navigation |
+| `excerpt` | string | ✅ | Short description shown in the article list |
+| `isPremium` | boolean | ✅ | `true` = Pro-only; `false` = free |
+| `order` | number | ✅ | Position within the section (lower = earlier) |
+| `readingTime` | number | recommended | Estimated reading time in minutes |
+| `tags` | string[] | recommended | Tag array for filtering |
+| `video` | string | optional | YouTube embed URL (`/embed/` format) |
+| `series` | string | optional | Series name (e.g. "CLI Agent Pattern") |
+| `company` | string | optional | For interview questions: company source |
+| `difficulty` | string | optional | For interview questions: e.g. "Medium-Hard" |
 
-> ⚠️ `isPremium: true` 的文章，未付费用户只能看到 `excerpt`，内容会被服务端拦截。
+> ⚠️ Articles with `isPremium: true` — the body is blocked server-side for non-Pro users. Only the excerpt is visible.
 
 ---
 
-## 二、添加全新章节（Section）
+## 2. Adding a New Section
 
-### 第一步：创建章节目录
+### Step 1: Create the section directory
 
 ```bash
 mkdir content/my-new-section
 ```
 
-### 第二步：创建 `_category.json`
+### Step 2: Create `_category.json`
 
-这是章节的必要配置文件，缺少它该章节会被忽略：
+This file is required — the section is ignored without it:
 
 ```json
 {
-  "name": "我的新章节",
-  "description": "这个章节介绍什么内容。",
-  "icon": "🚀",
-  "order": 7
+  "name": "My New Section",
+  "description": "What this section covers.",
+  "icon": "🔧",
+  "order": 5
 }
 ```
 
-| 字段 | 说明 |
-|------|------|
-| `name` | 显示在导航和首页的章节名称 |
-| `description` | 章节简介 |
-| `icon` | Emoji 图标，显示在章节卡片上 |
-| `order` | 章节在课程中的排列顺序（数字越小越靠前） |
+| Field | Description |
+|-------|-------------|
+| `name` | Section name shown in navigation and homepage |
+| `description` | Section description |
+| `icon` | Emoji icon shown on section cards |
+| `order` | Position in the course (lower = earlier) |
 
-### 第三步：添加文章
+### Step 3: Add articles
 
-按照上一节的方式，在新目录下创建 Markdown 文件即可。
+Follow the previous section to create Markdown files inside the new directory.
 
 ---
 
-## 三、Markdown 语法支持
+## 3. Markdown Syntax Support
 
-本项目使用 **remark + rehype** 渲染管道，支持以下特性：
+The project uses a **remark + rehype** pipeline supporting:
 
-### 标准 Markdown
-
-```markdown
-# H1 标题
-## H2 标题
-
-**加粗** / *斜体* / ~~删除线~~
-
-- 无序列表
-1. 有序列表
-
-[链接文字](https://example.com)
-![图片描述](https://example.com/image.png)
-```
-
-### 表格（GFM）
+### Standard Markdown
 
 ```markdown
-| 列1 | 列2 | 列3 |
-|-----|-----|-----|
-| A   | B   | C   |
+# H1
+## H2
+
+**bold** / *italic* / ~~strikethrough~~
+
+- unordered list
+1. ordered list
+
+[link text](https://example.com)
+![alt text](https://example.com/image.png)
 ```
 
-### 代码块（自动语法高亮）
+### Tables (GFM)
+
+```markdown
+| Column A | Column B | Column C |
+|----------|----------|----------|
+| value    | value    | value    |
+```
+
+### Code blocks (auto syntax highlighting)
 
 ````markdown
 ```python
 def hello():
-    print("Hello, Agent!")
-```
-
-```typescript
-const agent = new Agent({ model: "claude-3-5-sonnet" })
+    return "Hello, Agent!"
 ```
 ````
 
-支持的语言：`python`、`typescript`、`javascript`、`bash`、`json`、`yaml` 等主流语言自动识别。
+Supported languages: `python`, `typescript`, `javascript`, `bash`, `json`, `yaml`, and all other common languages.
 
-### 嵌入视频（iframe）
+### Embedding video (iframe)
 
-```markdown
-<iframe
-  width="100%"
-  height="400"
-  src="https://www.youtube.com/embed/VIDEO_ID"
-  frameborder="0"
-  allowfullscreen
-></iframe>
+```html
+<div class="video-container">
+  <iframe src="https://www.youtube.com/embed/VIDEO_ID" allowfullscreen></iframe>
+</div>
 ```
 
-或者在 Frontmatter 中填写 `video` 字段，系统会自动渲染播放器。
+Or set the `video` field in Frontmatter — the player renders automatically.
 
-### 提示块（使用 HTML）
+### Callout blocks (HTML)
 
-```markdown
-<blockquote>
-💡 <strong>提示：</strong> 这是一个重要提示。
-</blockquote>
+```html
+<div class="callout">
+  💡 <strong>Tip:</strong> This is an important note.
+</div>
 ```
 
 ---
 
-## 四、完整示例
+## 4. Full Example
 
-以下是一篇完整的新文章示例，保存为 `content/tools/03-mcp-protocol.md`：
+A complete new article saved as `content/agent-principles/03-mcp-protocol.md`:
 
 ```markdown
 ---
-title: "MCP 协议：标准化工具调用"
-excerpt: "了解 Model Context Protocol 如何统一 AI Agent 的工具调用标准。"
-isPremium: true
+title: "MCP: Standardizing Tool Calls"
+excerpt: "How the Model Context Protocol unifies tool-calling across AI Agents."
+isPremium: false
 order: 3
 readingTime: 12
-tags: ["mcp", "tools", "protocol"]
-video: "https://www.youtube.com/embed/EXAMPLE_ID"
+tags: ["mcp", "protocol", "tool-use"]
 ---
 
-# MCP 协议：标准化工具调用
+# MCP: Standardizing Tool Calls
 
-## 什么是 MCP？
+## What is MCP?
 
-Model Context Protocol（MCP）是 Anthropic 提出的开放协议，用于标准化...
+The Model Context Protocol (MCP) is an open protocol from Anthropic for standardizing...
 
-## 核心架构
+## Core Architecture
 
-| 组件 | 职责 |
-|------|------|
-| MCP Server | 暴露工具和资源 |
-| MCP Client | Agent 侧连接器 |
-| Transport | 通信层（stdio / SSE） |
+| Component | Role |
+|-----------|------|
+| MCP Server | Exposes tools and resources |
+| MCP Client | Agent-side connector |
+| Transport | Communication layer (stdio / SSE) |
 
-## 代码示例
+## Code Example
 
-​```python
-from mcp import ClientSession, StdioServerParameters
+\`\`\`python
+from mcp import MCPServer
 
-async def main():
-    server = StdioServerParameters(command="python", args=["server.py"])
-    async with ClientSession(server) as session:
-        tools = await session.list_tools()
-        print(tools)
-​```
+server = MCPServer()
+
+@server.tool("search_web")
+def search(query: str) -> str:
+    return web_search(query)
+\`\`\`
 ```
 
 ---
 
-## 五、发布流程
+## 5. Publishing
 
-内容修改完成后，通过 Git 推送即可上线（部署自动触发）：
+After editing content, push via Git to deploy (CI/CD triggers automatically):
 
 ```bash
-# 1. 将新文件加入暂存区
+# 1. Stage new files
 git add content/
 
-# 2. 提交
-git commit -m "content: 添加 MCP 协议文章"
+# 2. Commit
+git commit -m "content: add MCP protocol article"
 
-# 3. 推送到 GitHub（CI/CD 自动部署）
+# 3. Push to GitHub (CI/CD auto-deploys)
 git push
 ```
 
-> **注意：** 本项目使用 Next.js 静态生成（SSG），push 后需等待约 1-2 分钟构建完成，新内容才会在线上生效。
+> **Note:** The project uses Next.js with server-side rendering. Changes take effect as soon as the server restarts.
 
 ---
 
-## 六、常见问题
+## 6. FAQ
 
-**Q: 文章不显示在列表里？**
-A: 检查 `_category.json` 是否存在；检查文件名是否以 `.md` 结尾且不以 `_` 开头。
+**Q: Article not showing in the list?**
+A: Check that `_category.json` exists in the section directory; check that the filename ends in `.md` and doesn't start with `_`.
 
-**Q: 代码块语法高亮没生效？**
-A: 确认代码块开头标注了语言名称（如 ` ```python `），不要留空。
+**Q: Code block syntax highlighting not working?**
+A: Make sure you specify the language after the opening backticks (e.g. ` ```python `). Don't leave it blank.
 
-**Q: 想更新已有文章？**
-A: 直接编辑对应 `.md` 文件并 push，无需改动其他代码。
+**Q: Want to update an existing article?**
+A: Edit the corresponding `.md` file directly and push. No other code changes needed.
 
-**Q: 如何设置文章顺序？**
-A: 修改 Frontmatter 中的 `order` 字段（整数），或调整文件名前缀数字，两者取其一即可（系统优先以 `order` 字段排序）。
+**Q: How do I control article order?**
+A: Set the `order` field in Frontmatter (integer). Lower numbers appear first. You can also adjust the numeric prefix in the filename — the system sorts by `order` field first.

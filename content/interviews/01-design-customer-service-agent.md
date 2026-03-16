@@ -1,37 +1,38 @@
 ---
-title: "[系统设计] 设计一个企业级客服 Agent 系统"
-excerpt: "来自多家顶级 AI 公司的高频系统设计题。要求：支持多轮对话、工单流转、人工接管、10 万日活。本文给出完整架构设计 + 考官评分维度。"
+title: "[System Design] Design an Enterprise Customer Service Agent"
+excerpt: "A high-frequency system design question from multiple top AI companies. Requirements: multi-turn dialogue, ticket escalation, human handoff, 100k DAU. Full architecture and examiner scoring rubric included."
 isPremium: true
 order: 1
 readingTime: 25
 tags: ["interview", "system-design", "customer-service", "production"]
-company: "综合（OpenAI / Anthropic 变体）"
+company: "OpenAI / Anthropic (variant)"
 difficulty: "Medium-Hard"
+series: "System Design"
 ---
 
-# [系统设计] 设计一个企业级客服 Agent 系统
+# [System Design] Design an Enterprise Customer Service Agent
 
-> 🔒 **PRO 内容** — 升级 Pro 解锁完整设计方案与评分标准。
+> 🔒 **PRO Content** — Upgrade to Pro to unlock the full design walkthrough and scoring rubric.
 
-## 题目原文
+## The Question
 
-> "请设计一个 AI 客服 Agent 系统，要求：
-> - 支持多轮对话，理解上下文
-> - 能调用订单系统、退款系统等内部 API
-> - 遇到复杂情况能无缝转接人工
-> - 支持 10 万日活，P99 延迟 < 3 秒
-> - 保证对话历史可审计
+> "Design an AI customer service agent system with the following requirements:
+> - Multi-turn conversations with persistent context
+> - Ability to call internal APIs (order system, refund system, etc.)
+> - Seamless escalation to human agents when needed
+> - 100k DAU target with P99 latency under 3 seconds
+> - Full audit trail of all conversations
 >
-> 请描述你的架构设计，并说明关键技术决策。"
+> Describe your architecture and walk through your key technical decisions."
 
 ---
 
-## 考察维度（考官视角）
+## What Interviewers Are Testing
 
-1. **需求拆解能力**：能否快速识别核心约束（延迟、可靠性、审计）
-2. **Agent Loop 设计**：工具调用链如何规划，避免无限循环
-3. **状态管理**：多轮对话的 Session 如何持久化
-4. **降级策略**：模型 timeout / 工具报错时怎么处理
-5. **人工接管机制**：何时触发，如何保证上下文连续性
+1. **Requirements decomposition**: Can you quickly identify the core constraints (latency, reliability, auditability)?
+2. **Agent loop design**: How do you structure the tool call chain to avoid infinite loops?
+3. **State management**: How do you persist multi-turn session state?
+4. **Graceful degradation**: How does the system behave when the model times out or a tool fails?
+5. **Human handoff**: What triggers escalation? How do you preserve context continuity?
 
-> 完整方案、架构图、代码片段见 PRO 内容 👆
+> Full architecture diagram, code snippets, and scoring breakdown in PRO content 👆

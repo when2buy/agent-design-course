@@ -1,17 +1,17 @@
 ---
-title: "Function Calling 深度解析"
-excerpt: "OpenAI、Anthropic、Gemini 的 Function Calling 实现对比与最佳实践。"
+title: "Function Calling Deep Dive"
+excerpt: "A side-by-side comparison of Function Calling implementations across OpenAI, Anthropic, and Gemini — with production best practices."
 isPremium: true
 order: 2
 readingTime: 15
 tags: ["tools", "function-calling", "openai", "claude"]
 ---
 
-# Function Calling 深度解析
+# Function Calling Deep Dive
 
-## 什么是 Function Calling？
+## What Is Function Calling?
 
-Function Calling 是 LLM 提供商提供的**结构化工具调用**能力。LLM 不是通过文本描述"我要调用某工具"，而是直接输出结构化的 JSON，精确指定要调用的函数和参数。
+Function Calling is a **structured tool invocation** capability provided by LLM APIs. Instead of the model describing "I want to call a tool" in plain text, it outputs structured JSON that precisely specifies which function to call and with what arguments.
 
 ## OpenAI Function Calling
 
@@ -24,11 +24,11 @@ tools = [{
     "type": "function",
     "function": {
         "name": "get_weather",
-        "description": "获取指定城市的当前天气",
+        "description": "Get the current weather for a given city",
         "parameters": {
             "type": "object",
             "properties": {
-                "city": {"type": "string", "description": "城市名称"},
+                "city": {"type": "string", "description": "City name"},
                 "unit": {"type": "string", "enum": ["celsius", "fahrenheit"]}
             },
             "required": ["city"]
@@ -38,12 +38,12 @@ tools = [{
 
 response = client.chat.completions.create(
     model="gpt-4o",
-    messages=[{"role": "user", "content": "北京现在天气怎么样？"}],
+    messages=[{"role": "user", "content": "What's the weather in London right now?"}],
     tools=tools,
     tool_choice="auto"
 )
 
-# 处理工具调用
+# Handle tool calls
 message = response.choices[0].message
 if message.tool_calls:
     for tool_call in message.tool_calls:
@@ -61,11 +61,11 @@ client = anthropic.Anthropic()
 
 tools = [{
     "name": "get_weather",
-    "description": "获取指定城市的当前天气",
+    "description": "Get the current weather for a given city",
     "input_schema": {
         "type": "object",
         "properties": {
-            "city": {"type": "string", "description": "城市名称"},
+            "city": {"type": "string", "description": "City name"},
         },
         "required": ["city"]
     }
@@ -75,7 +75,7 @@ response = client.messages.create(
     model="claude-opus-4-6",
     max_tokens=1024,
     tools=tools,
-    messages=[{"role": "user", "content": "北京今天天气如何？"}]
+    messages=[{"role": "user", "content": "What's the weather in London today?"}]
 )
 
 for block in response.content:
@@ -83,48 +83,48 @@ for block in response.content:
         result = execute_tool(block.name, block.input)
 ```
 
-## 并行工具调用
+## Parallel Tool Calls
 
-现代 LLM 支持同时调用多个工具，大幅提升效率：
+Modern LLMs can call multiple tools simultaneously, dramatically improving throughput:
 
 ```python
 import asyncio
 
-# 用户问：北京、上海、广州今天天气分别怎么样？
-# LLM 可以同时调用 3 个 get_weather
+# User asks: "What's the weather in London, Paris, and Tokyo?"
+# The LLM can fire all 3 get_weather calls at once
 
 results = await asyncio.gather(*[
     async_execute_tool("get_weather", {"city": city})
-    for city in ["北京", "上海", "广州"]
+    for city in ["London", "Paris", "Tokyo"]
 ])
 ```
 
-## 各提供商对比
+## Provider Comparison
 
-| 特性 | OpenAI | Claude | Gemini |
-|------|--------|--------|--------|
-| 并行调用 | ✅ | ✅ | ✅ |
-| 强制调用 | `tool_choice="required"` | `tool_choice={"type":"any"}` | ✅ |
-| 流式调用 | ✅ | ✅ | ✅ |
-| 嵌套对象 | ✅ | ✅ | ✅ |
+| Feature | OpenAI | Claude | Gemini |
+|---------|--------|--------|--------|
+| Parallel calls | ✅ | ✅ | ✅ |
+| Force tool use | `tool_choice="required"` | `tool_choice={"type":"any"}` | ✅ |
+| Streaming | ✅ | ✅ | ✅ |
+| Nested objects | ✅ | ✅ | ✅ |
 
-## 生产技巧
+## Production Techniques
 
 ```python
 from functools import lru_cache
 
 @lru_cache(maxsize=1000)
 def cached_search(query: str) -> str:
-    """缓存搜索结果，避免重复 API 调用"""
+    """Cache search results to avoid redundant API calls."""
     return search_web(query)
 
 async def execute_with_timeout(tool_func, args, timeout=10.0):
-    """带超时的工具执行"""
+    """Execute a tool with a hard timeout."""
     try:
         return await asyncio.wait_for(
             asyncio.to_thread(tool_func, **args),
             timeout=timeout
         )
     except asyncio.TimeoutError:
-        return f"工具执行超时（{timeout}秒）"
+        return f"Tool timed out after {timeout}s."
 ```

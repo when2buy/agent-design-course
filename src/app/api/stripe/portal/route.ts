@@ -6,12 +6,12 @@ import { prisma } from '@/lib/db'
 export async function POST(req: NextRequest) {
   const session = await auth()
   if (!session?.user) {
-    return NextResponse.json({ error: '请先登录' }, { status: 401 })
+    return NextResponse.json({ error: 'Please sign in first' }, { status: 401 })
   }
 
   const user = await prisma.user.findUnique({ where: { id: session.user.id } })
   if (!user?.stripeCustomerId) {
-    return NextResponse.json({ error: '没有关联的 Stripe 账户' }, { status: 400 })
+    return NextResponse.json({ error: 'No linked Stripe account found' }, { status: 400 })
   }
 
   const baseUrl = process.env.NEXTAUTH_URL ?? 'http://localhost:3000'

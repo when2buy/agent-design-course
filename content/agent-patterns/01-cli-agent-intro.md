@@ -1,6 +1,6 @@
 ---
-title: "专题介绍：从零构建微型 Claude Code 智能体"
-excerpt: "12 个渐进式章节，从一个 30 行的 while 循环出发，一路演进到多智能体自治协作系统。每个章节只加一个机制，每个机制都能独立理解。"
+title: "Pattern: Build a Micro Claude Code Agent from Scratch"
+excerpt: "12 progressive chapters, starting from a 30-line while loop and evolving into a multi-agent autonomous collaboration system. Each chapter adds exactly one mechanism — each mechanism stands alone."
 isPremium: false
 order: 1
 readingTime: 8
@@ -8,19 +8,19 @@ tags: ["claude-code", "agent", "tutorial", "intro"]
 series: "CLI Agent Pattern"
 ---
 
-# 从零构建微型 Claude Code：Bash is all you need
+# CLI Agent Pattern: Bash Is All You Need
 
 > *"The model is the agent. Our job is to give it tools and stay out of the way."*
 >
 > — [learn-claude-code](https://github.com/shareAI-lab/learn-claude-code)
 
-这句话是整个专题的哲学基础。AI Agent 不是魔法，它的核心不过是一个 **while 循环** 加上一套工具。这个专题将带你从这个最小的起点出发，一步步构建出具备规划、记忆、任务调度、多智能体协作能力的完整系统。
+This quote is the philosophical foundation of the entire series. An AI Agent is not magic — at its core it's nothing more than a **while loop** plus a set of tools. This series walks you from that minimal starting point to a complete system with planning, memory, task scheduling, and multi-agent collaboration.
 
 ---
 
-## 核心模式：The Agent Loop
+## The Core Pattern: The Agent Loop
 
-整个专题围绕一个核心循环展开：
+The entire series revolves around one central loop:
 
 ```
 User --> messages[] --> LLM --> response
@@ -34,7 +34,7 @@ User --> messages[] --> LLM --> response
                      loop back --> messages[]
 ```
 
-用代码表示，这就是一个 Agent 的最小可行实现：
+In code, this is the minimal viable agent implementation:
 
 ```python
 def agent_loop(query: str):
@@ -50,11 +50,11 @@ def agent_loop(query: str):
         )
         messages.append({"role": "assistant", "content": response.content})
 
-        # 模型没有调用工具 → 任务完成，退出循环
+        # Model didn't call a tool → task done, exit loop
         if response.stop_reason != "tool_use":
             return
 
-        # 执行所有工具调用，收集结果
+        # Execute all tool calls and collect results
         results = []
         for block in response.content:
             if block.type == "tool_use":
@@ -67,68 +67,68 @@ def agent_loop(query: str):
         messages.append({"role": "user", "content": results})
 ```
 
-**这不到 30 行代码就是整个智能体。** 后面 11 个章节都是在这个循环之上叠加机制，循环本身始终不变。
+**This is under 30 lines. This is the entire agent.** The next 11 chapters each add one mechanism on top of this loop — the loop itself never changes.
 
 ---
 
-## 12 步学习路径
+## 12-Step Learning Path
 
-| 阶段 | 章节 | 箴言 |
-|------|------|------|
-| **第一阶段：基础循环与工具** | s01 Agent Loop | 一个循环和 Bash 就够了 |
-| | s02 Tool Use | 加工具 = 加一个 handler |
-| | s03 TodoWrite | 没有计划的 Agent 只会漂移 |
-| **第二阶段：上下文与知识** | s04 Subagents | 大任务拆小，每个子任务干净的上下文 |
-| | s05 Skills | 用到什么知识，临时加载什么知识 |
-| | s06 Context Compact | 上下文总会满，要有办法腾地方 |
-| **第三阶段：任务与后台** | s07 Task System | 大目标拆成小任务，排好序，记在磁盘上 |
-| | s08 Background Tasks | 慢操作丢后台，Agent 继续想下一步 |
-| **第四阶段：多智能体团队** | s09 Agent Teams | 任务太大一个人干不完，要能分给队友 |
-| | s10 Team Protocols | 队友之间要有统一的沟通规矩 |
-| | s11 Autonomous Agents | 队友自己看看板，有活就认领 |
-| | s12 Worktree Isolation | 各干各的目录，互不干扰 |
+| Stage | Chapter | Mantra |
+|-------|---------|--------|
+| **Stage 1: Loop & Tools** | s01 Agent Loop | One loop + Bash = an agent |
+| | s02 Tool Use | Adding a tool = adding a handler |
+| | s03 TodoWrite | An agent without a plan just drifts |
+| **Stage 2: Context & Knowledge** | s04 Subagents | Split big tasks; each subtask gets a clean context |
+| | s05 Skills | Load knowledge on demand, not upfront |
+| | s06 Context Compact | Context always fills up — you need a way to clear it |
+| **Stage 3: Tasks & Background** | s07 Task System | Break goals into tasks, order them, persist them to disk |
+| | s08 Background Tasks | Slow ops go async; the agent keeps thinking |
+| **Stage 4: Multi-Agent Teams** | s09 Agent Teams | Tasks too big for one agent — delegate to teammates |
+| | s10 Team Protocols | Teammates need agreed communication rules |
+| | s11 Autonomous Agents | Teammates scan the board and self-assign tasks |
+| | s12 Worktree Isolation | Each agent works in its own directory, no interference |
 
 ---
 
-## 设计哲学：无侵入叠加
+## Design Philosophy: Non-Invasive Layering
 
-这个系列最精妙的地方在于：**所有新功能都像洋葱皮一样包裹在核心循环之外，从不修改循环本身。**
+The elegance of this series: **every new capability wraps around the core loop like an onion layer — the loop itself is never modified.**
 
 ```
 s01: while loop + bash tool
-s02: + dispatch map (多工具)
-s03: + TodoManager (规划)
-s04: + Subagent runner (子上下文)
-s05: + SkillLoader (按需知识)
-s06: + 三层压缩 (无限上下文)
-s07: + TaskGraph (依赖关系)
-s08: + BackgroundManager (并发)
-s09: + TeammateManager (团队)
-s10: + FSM protocols (协调)
-s11: + idle cycle (自治)
-s12: + worktree binding (隔离)
+s02: + dispatch map (multi-tool)
+s03: + TodoManager (planning)
+s04: + Subagent runner (clean sub-contexts)
+s05: + SkillLoader (on-demand knowledge)
+s06: + 3-layer compaction (infinite context)
+s07: + TaskGraph (dependency tracking)
+s08: + BackgroundManager (concurrency)
+s09: + TeammateManager (team)
+s10: + FSM protocols (coordination)
+s11: + idle cycle (autonomy)
+s12: + worktree binding (isolation)
 ```
 
-每加一层，能力提升一档，但底层循环从未改变。这是工程设计中**高内聚低耦合**最直观的示范。
+Each layer upgrades capability by one level. The underlying loop never changes. This is the most hands-on demonstration of **high cohesion, low coupling** you'll find anywhere.
 
 ---
 
-## 快速上手
+## Quick Start
 
 ```bash
 git clone https://github.com/shareAI-lab/learn-claude-code
 cd learn-claude-code
 pip install -r requirements.txt
 
-# 配置 API Key
+# Configure API key
 cp .env.example .env
 echo "ANTHROPIC_API_KEY=your-key-here" >> .env
 
-# 从第一个章节开始
+# Start from chapter one
 python agents/s01_agent_loop.py
 
-# 或者直接跳到终章
+# Or jump straight to the final version
 python agents/s_full.py
 ```
 
-后续四篇文章将逐阶段深入每个机制的原理与实现细节。
+The next four articles walk through each stage in depth.

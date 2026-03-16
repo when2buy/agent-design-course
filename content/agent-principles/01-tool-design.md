@@ -1,6 +1,6 @@
 ---
-title: "工具设计最佳实践"
-excerpt: "如何设计让 Agent 能精准调用的工具——命名、描述、参数规范。"
+title: "Tool Design Best Practices"
+excerpt: "How to design tools that agents can call reliably — naming, descriptions, parameter schemas, error handling, and safety."
 isPremium: true
 order: 1
 readingTime: 12
@@ -8,19 +8,19 @@ tags: ["tools", "design", "function-calling"]
 video: "https://www.youtube.com/embed/dQw4w9WgXcQ"
 ---
 
-# 工具设计最佳实践
+# Tool Design Best Practices
 
-## 工具是 Agent 的手
+## Tools Are an Agent's Hands
 
-一个 Agent 能力的上限，很大程度上由它拥有的工具决定。设计糟糕的工具会导致 Agent 频繁出错；设计优秀的工具让 Agent 如虎添翼。
+An agent's ceiling is largely determined by the quality of its tools. Poorly designed tools cause constant errors. Well-designed tools let the agent operate like a professional.
 
-## 工具定义的三要素
+## The Three Elements of a Good Tool Definition
 
-### 1. 清晰的名称
+### 1. A clear name
 
-工具名称应该是**动词+名词**的组合，语义明确：
+Tool names should be **verb + noun** combinations with unambiguous semantics:
 
-✅ 好的命名：
+✅ Good naming:
 ```python
 search_web(query: str)
 send_email(to: str, subject: str, body: str)
@@ -28,126 +28,126 @@ get_stock_price(ticker: str)
 execute_python_code(code: str)
 ```
 
-❌ 差的命名：
+❌ Bad naming:
 ```python
 tool1()
 process()
 do_thing(input)
 ```
 
-### 2. 精准的描述
+### 2. A precise description
 
-描述是 LLM 选择工具的依据，必须包含工具**做什么**、**何时**使用、**不应该**在什么情况下使用：
+The description is what the LLM uses to decide *which* tool to call. It must explain **what the tool does**, **when to use it**, and **when NOT to use it**:
 
 ```python
 @tool
 def search_web(query: str) -> str:
     """
-    在互联网上搜索最新信息。
+    Search the internet for up-to-date information.
 
-    使用场景：
-    - 需要获取实时信息（新闻、股价、天气）
-    - 需要验证事实
-    - 用户问题涉及近期事件
+    Use when:
+    - You need real-time information (news, stock prices, weather)
+    - You need to verify a fact
+    - The user's question involves recent events
 
-    不要使用：
-    - 已知答案的问题（避免不必要的 API 调用）
-    - 需要专业计算的场景（使用 calculator 工具）
+    Do NOT use when:
+    - The answer is already known (avoid unnecessary API calls)
+    - Mathematical computation is needed (use the calculator tool instead)
 
     Args:
-        query: 搜索关键词，使用英文效果更好
+        query: Search keywords. English queries tend to yield better results.
 
     Returns:
-        搜索结果摘要，包含相关网页内容
+        A summary of relevant web content.
     """
     return web_search(query)
 ```
 
-### 3. 严格的参数类型
+### 3. Strict parameter types
 
 ```python
 from pydantic import BaseModel, Field
 from typing import Literal
 
 class EmailParams(BaseModel):
-    to: str = Field(description="收件人邮箱地址")
-    subject: str = Field(description="邮件主题，不超过100字符")
-    body: str = Field(description="邮件正文，支持 Markdown 格式")
+    to: str = Field(description="Recipient email address")
+    subject: str = Field(description="Email subject line, max 100 characters")
+    body: str = Field(description="Email body, Markdown supported")
     priority: Literal["low", "normal", "high"] = Field(
         default="normal",
-        description="邮件优先级"
+        description="Message priority"
     )
 
 @tool(args_schema=EmailParams)
 def send_email(to: str, subject: str, body: str, priority: str = "normal") -> str:
-    """发送电子邮件"""
-    # 实现...
+    """Send an email."""
+    # implementation...
 ```
 
-## 工具粒度设计
+## Tool Granularity
 
-工具应该**原子化**，一个工具只做一件事：
+Tools should be **atomic** — one tool, one responsibility:
 
 ```python
-# ❌ 错误：一个工具做太多事
+# ❌ Wrong: one tool doing too much
 def handle_email(action, to=None, subject=None, ...):
     if action == "send": ...
     elif action == "read": ...
     elif action == "delete": ...
 
-# ✅ 正确：每个工具职责单一
+# ✅ Correct: each tool has a single job
 def send_email(to, subject, body): ...
 def read_email(email_id): ...
 def list_emails(folder, limit): ...
 def delete_email(email_id): ...
 ```
 
-## 错误处理
+## Error Handling
 
-工具必须返回有意义的错误信息，让 Agent 能够自我纠正：
+Tools must return meaningful error messages so the agent can self-correct:
 
 ```python
 def get_stock_price(ticker: str) -> str:
     try:
         price = fetch_price(ticker)
-        return f"{ticker} 当前价格: ${price:.2f}"
+        return f"{ticker} current price: ${price:.2f}"
     except InvalidTickerError:
-        return f"错误: '{ticker}' 不是有效的股票代码。请确认格式，例如 AAPL、TSLA、GOOGL"
+        return f"Error: '{ticker}' is not a valid ticker symbol. Try formats like AAPL, TSLA, GOOGL."
     except NetworkError:
-        return "错误: 网络请求失败，请稍后重试"
+        return "Error: Network request failed. Please retry."
     except Exception as e:
-        return f"获取股价失败: {str(e)}"
+        return f"Failed to fetch stock price: {str(e)}"
 ```
 
-## 工具的安全设计
+## Security Considerations
 
-生产环境中，工具需要考虑安全性：
+In production, tools need safety boundaries:
 
 ```python
 def execute_python_code(code: str) -> str:
-    """在沙箱环境中执行 Python 代码"""
-    # 1. 代码扫描
+    """Execute Python code in a sandboxed environment."""
+    # 1. Static analysis
     if contains_dangerous_imports(code):
-        return "错误: 代码包含不允许的导入（os, sys, subprocess 等）"
+        return "Error: Code contains disallowed imports (os, sys, subprocess, etc.)"
 
-    # 2. 资源限制
+    # 2. Resource limits
     with timeout(seconds=10), memory_limit(mb=100):
         result = sandbox.execute(code)
 
     return result
 ```
 
-## 实战：构建研究助手工具集
+## Real-World Example: Research Assistant Toolset
 
 ```python
 tools = [
-    search_web,           # 网络搜索
-    fetch_webpage,        # 获取网页内容
-    extract_pdf_text,     # 解析 PDF
-    summarize_text,       # 文本总结
-    save_to_memory,       # 保存到记忆
-    create_report,        # 生成报告
+    search_web,           # Web search
+    fetch_webpage,        # Fetch page content
+    extract_pdf_text,     # Parse PDFs
+    summarize_text,       # Summarize long text
+    save_to_memory,       # Persist to memory store
+    create_report,        # Generate structured report
 ]
 ```
 
-下一节：**Function Calling 深度解析** —— 各大 LLM 提供商的工具调用 API 对比。
+Next: **Function Calling Deep Dive** — comparing the tool-calling APIs across OpenAI, Claude, and Gemini.

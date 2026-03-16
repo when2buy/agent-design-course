@@ -14,16 +14,16 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
             <span className="text-2xl">🤖</span>
-            <span className="font-bold text-white text-lg">AI Agent 课程</span>
+            <span className="font-bold text-white text-lg">Agent Design Course</span>
           </Link>
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-6">
             <Link href="/learn" className="text-gray-400 hover:text-white transition-colors text-sm">
-              课程内容
+              Curriculum
             </Link>
             <Link href="/pricing" className="text-gray-400 hover:text-white transition-colors text-sm">
-              订阅方案
+              Pricing
             </Link>
             {session ? (
               <>
@@ -31,7 +31,7 @@ export default function Navbar() {
                   href="/dashboard"
                   className="text-gray-400 hover:text-white transition-colors text-sm"
                 >
-                  我的课程
+                  My Courses
                 </Link>
                 {session.user.subscriptionStatus === 'pro' && (
                   <span className="bg-gradient-to-r from-yellow-500 to-orange-500 text-black text-xs font-bold px-2 py-0.5 rounded-full">
@@ -44,7 +44,7 @@ export default function Navbar() {
                     onClick={() => signOut({ callbackUrl: '/' })}
                     className="text-sm text-gray-400 hover:text-white border border-gray-700 px-3 py-1.5 rounded-lg hover:border-gray-500 transition-all"
                   >
-                    退出
+                    Sign Out
                   </button>
                 </div>
               </>
@@ -54,13 +54,13 @@ export default function Navbar() {
                   href="/login"
                   className="text-sm text-gray-400 hover:text-white transition-colors"
                 >
-                  登录
+                  Sign In
                 </Link>
                 <Link
                   href="/register"
                   className="text-sm bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg transition-colors font-medium"
                 >
-                  免费注册
+                  Sign Up Free
                 </Link>
               </div>
             )}
@@ -84,22 +84,22 @@ export default function Navbar() {
         {/* Mobile menu */}
         {menuOpen && (
           <div className="md:hidden py-4 space-y-3 border-t border-gray-800">
-            <Link href="/learn" className="block text-gray-400 hover:text-white py-2">课程内容</Link>
-            <Link href="/pricing" className="block text-gray-400 hover:text-white py-2">订阅方案</Link>
+            <Link href="/learn" className="block text-gray-400 hover:text-white py-2">Curriculum</Link>
+            <Link href="/pricing" className="block text-gray-400 hover:text-white py-2">Pricing</Link>
             {session ? (
               <>
-                <Link href="/dashboard" className="block text-gray-400 hover:text-white py-2">我的课程</Link>
+                <Link href="/dashboard" className="block text-gray-400 hover:text-white py-2">My Courses</Link>
                 <button
                   onClick={() => signOut({ callbackUrl: '/' })}
                   className="block text-gray-400 hover:text-white py-2"
                 >
-                  退出登录
+                  Sign Out
                 </button>
               </>
             ) : (
               <>
-                <Link href="/login" className="block text-gray-400 hover:text-white py-2">登录</Link>
-                <Link href="/register" className="block text-blue-400 hover:text-blue-300 py-2">免费注册</Link>
+                <Link href="/login" className="block text-gray-400 hover:text-white py-2">Sign In</Link>
+                <Link href="/register" className="block text-blue-400 hover:text-blue-300 py-2">Sign Up Free</Link>
               </>
             )}
           </div>

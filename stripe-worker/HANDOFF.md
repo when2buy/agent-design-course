@@ -1,64 +1,61 @@
-# Stripe 支付集成 — 交接文档
+# Stripe Payment Integration — Handoff Document
 
-> 状态：**全部就绪 ✅ — Stripe 已配置，服务已上线**
-
----
-
-## 当前配置（已填入 .env.production）
-
-| 变量 | 值 |
-|------|----|
-| `STRIPE_SECRET_KEY` | `sk_live_51NKYsPEUK...` (aitist.ai 账号) |
-| `STRIPE_PUBLISHABLE_KEY` | `pk_live_51NKYsPEUK...` |
-| `STRIPE_WEBHOOK_SECRET` | `whsec_Y5BnkazRuaj6...` (course 专属 endpoint) |
-| `STRIPE_PRICE_ID` | `price_1T5DiMEUKKyCFBFhGlUwZUP0` |
-
-产品：`prod_U3KNLtAsZ53eFi` — "AI Agent 设计课 Pro"  
-价格：¥299/年（CNY，recurring yearly）  
-Webhook Endpoint ID：`we_1T5DiZEUKKyCFBFhdOJDeukK`
-
-> ⚠️ Tunnel URL 会随重启变化，需同步更新 Stripe webhook endpoint URL
+> Status: **All set ✅ — Stripe configured, service live**
 
 ---
 
-## Steve 需要做的（5步）
+## Current Configuration (already in .env.production)
 
-### 第 1 步：创建 Stripe 账号并开通中国收款
+| Variable | Value |
+|----------|-------|
+| `STRIPE_SECRET_KEY` | `sk_live_51NKYsPEUK...` (aitist.ai account) |
+| `STRIPE_WEBHOOK_SECRET` | `whsec_Y5BnkazRuaj6...` (course-specific endpoint) |
 
-登录 [Stripe Dashboard](https://dashboard.stripe.com) → 确保账号已完成 KYC 实名认证
+Product: `prod_U3KNLtAsZ53eFi` — "Agent Design Course Pro"  
+Price: $39/year (USD, recurring yearly)
 
-### 第 2 步：创建订阅产品
+> ⚠️ Tunnel URL changes on restart — Stripe webhook endpoint URL must be updated accordingly.
 
-1. Dashboard → Products → Add Product
-2. 填写：
-   - Name: `AI Agent 设计课 Pro`
-   - Price: `¥ 299` / year（Currency: CNY，Billing: Recurring，Interval: Yearly）
-3. 保存后复制 `Price ID`（格式：`price_xxxxxxxxxxxxxxxx`）
+---
 
-### 第 3 步：获取 API Keys
+## What Steve Needs to Do (5 Steps)
 
-Dashboard → Developers → API Keys
+### Step 1: Create a Stripe account and enable payment collection
 
-| Key | 在哪找 |
-|-----|------|
-| `STRIPE_SECRET_KEY` | Secret key（`sk_live_...`） |
-| `STRIPE_PUBLISHABLE_KEY` | Publishable key（`pk_live_...`） |
+Log into [Stripe Dashboard](https://dashboard.stripe.com) → ensure KYC verification is complete.
 
-### 第 4 步：配置 Webhook
+### Step 2: Create a subscription product
 
-1. Dashboard → Developers → Webhooks → Add endpoint
-2. Endpoint URL：`https://<你的域名>/api/stripe/webhook`
-3. 监听事件（勾选这5个）：
+1. Go to **Products → Add product**
+2. Fill in:
+   - Name: `Agent Design Course Pro`
+   - Pricing: Recurring, $39 / year
+3. After saving, copy the `Price ID` (format: `price_xxxxxxxxxxxxxxxx`)
+
+### Step 3: Get API Keys
+
+Go to **Developers → API Keys**:
+
+| Key | Where to find |
+|-----|---------------|
+| `STRIPE_SECRET_KEY` | Secret key (`sk_live_...`) |
+| `STRIPE_PUBLISHABLE_KEY` | Publishable key (`pk_live_...`) |
+
+### Step 4: Configure Webhook
+
+1. Go to **Developers → Webhooks → Add endpoint**
+2. Endpoint URL: `https://<your-domain>/api/stripe/webhook`
+3. Listen to these 5 events:
    - `checkout.session.completed`
    - `invoice.paid`
    - `invoice.payment_failed`
    - `customer.subscription.updated`
    - `customer.subscription.deleted`
-4. 保存后复制 `Signing secret`（`whsec_...`）
+4. After saving, copy the `Signing secret` (`whsec_...`)
 
-### 第 5 步：把 4 个 Key 发给 CTO Bot
+### Step 5: Send the 4 keys to CTO Bot
 
-把以下内容发给 Bot，它会自动填入并重启服务：
+Send the following to the bot and it will fill them in and restart the service:
 
 ```
 STRIPE_SECRET_KEY=sk_live_...
@@ -69,88 +66,91 @@ STRIPE_PRICE_ID=price_...
 
 ---
 
-## 代码已实现的功能
+## Implemented Features
 
-### API 路由
+### API Routes
 
-| 路由 | 方法 | 功能 |
-|------|------|------|
-| `/api/stripe/checkout` | POST | 创建 Checkout Session，跳转 Stripe 托管支付页 |
-| `/api/stripe/webhook` | POST | 处理 Stripe 回调，自动更新用户订阅状态 |
-| `/api/stripe/portal` | POST | 跳转 Stripe 订阅管理页（取消/改套餐） |
+| Route | Method | Function |
+|-------|--------|----------|
+| `/api/stripe/checkout` | POST | Create Checkout Session, redirect to Stripe-hosted payment page |
+| `/api/stripe/webhook` | POST | Handle Stripe callbacks, auto-update user subscription status |
+| `/api/stripe/portal` | POST | Redirect to Stripe subscription management portal (cancel/change plan) |
 
-### 支付流程
+### Payment Flow
 
 ```
-用户点击「升级 Pro」
-  → POST /api/stripe/checkout
-  → 跳转 Stripe Checkout（Stripe 托管，PCI 合规）
-  → 支付成功
-  → Stripe webhook → POST /api/stripe/webhook
-  → 验证签名 → DB: subscriptionStatus = 'pro'
-  → 跳转 /success 页面
+User clicks "Upgrade to Pro"
+    ↓
+POST /api/stripe/checkout
+    ↓
+Redirect to Stripe Checkout (Stripe-hosted, PCI-compliant)
+    ↓
+Payment successful
+    ↓
+POST /api/stripe/webhook → verify signature → DB: subscriptionStatus = 'pro'
+    ↓
+Redirect to /success page
 ```
 
-### Webhook 处理事件
+### Webhook Events
 
-| 事件 | 处理 |
-|------|------|
-| `checkout.session.completed` | 激活 Pro，记录 subscriptionId |
-| `invoice.paid` | 续费时延长到期时间 |
-| `invoice.payment_failed` | 记录日志（不降级，给用户宽限） |
-| `customer.subscription.updated` | 同步状态（含降级）|
-| `customer.subscription.deleted` | 降级为 free |
+| Event | Handling |
+|-------|----------|
+| `checkout.session.completed` | Activate Pro, record subscriptionId |
+| `invoice.paid` | Extend expiry on renewal |
+| `invoice.payment_failed` | Log the failure (no downgrade; grace period given) |
+| `customer.subscription.updated` | Sync status (including downgrades) |
+| `customer.subscription.deleted` | Downgrade to free |
 
-### DB 字段（User 表）
+### DB Fields (User table)
 
 ```prisma
-stripeCustomerId     String?  // Stripe Customer ID
-stripeSubscriptionId String?  // 当前订阅 ID
-stripePriceId        String?  // 当前 Price ID
-subscriptionStatus   String   @default("free")  // "free" | "pro"
-subscriptionEndsAt   DateTime? // 到期时间
+stripeCustomerId     String?   // Stripe customer ID
+stripeSubscriptionId String?   // current subscription ID
+stripePriceId        String?   // current Price ID
+subscriptionStatus   String    // 'free' | 'pro'
+subscriptionEndsAt   DateTime? // expiry timestamp
 ```
 
 ---
 
-## 测试（填入 Key 后）
+## Testing (after filling in the keys)
 
 ```bash
-# 测试 checkout（需要登录态）
+# Test checkout (requires a logged-in session)
 curl -X POST http://localhost:4000/api/stripe/checkout \
-  -H "Content-Type: application/json" \
-  -b "next-auth.session-token=..."
+  -H "Cookie: <session-cookie>" | jq '.url'
 
-# 使用 Stripe CLI 本地测试 webhook
-stripe listen --forward-to http://localhost:4000/api/stripe/webhook
+# Local webhook testing with Stripe CLI
+stripe listen --forward-to localhost:4000/api/stripe/webhook
 stripe trigger checkout.session.completed
 ```
 
 ---
 
-## 文件位置
+## File Locations
 
 ```
 src/
-├── lib/stripe.ts                      # Stripe 初始化 + PLANS 配置
-├── app/api/stripe/
-│   ├── checkout/route.ts              # 创建 Checkout Session
-│   ├── webhook/route.ts               # 处理 Stripe 回调
-│   └── portal/route.ts               # 订阅管理门户
-└── app/
-    ├── pricing/page.tsx               # 价格页（含升级按钮）
-    └── success/page.tsx               # 支付成功页
+├── lib/stripe.ts                      # Stripe init + PLANS config
+└── app/api/stripe/
+    ├── checkout/route.ts              # Create Checkout Session
+    ├── webhook/route.ts               # Handle Stripe callbacks
+    └── portal/route.ts               # Subscription management portal
+
+src/app/
+├── pricing/page.tsx                   # Pricing page (with upgrade button)
+└── success/page.tsx                   # Payment success page
 ```
 
 ---
 
-## 注意事项
+## Notes
 
-- **Webhook 签名验证**已实现，不可跳过
-- Stripe Keys **不要提交到 Git**（已在 `.gitignore` 里排除 `.env.production`）
-- 当前 Demo 环境用 `/api/subscribe` 可跳过支付直接升级 Pro（测试用）
-- 生产环境记得禁用或删除 `/api/subscribe` 路由
+- **Webhook signature verification** is implemented — do not skip or bypass it
+- Stripe keys **must not be committed to Git** (`.env.production` is in `.gitignore`)
+- The demo `/api/subscribe` route bypasses payment and directly upgrades to Pro — **disable or delete this in production**
 
 ---
 
-*由 CTO Bot 生成 — 2026-02-26*
+*Generated by CTO Bot — 2026-02-26*

@@ -17,17 +17,17 @@ export default async function LearnPage({
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">
       <div className="mb-10">
-        <h1 className="text-4xl font-bold text-white mb-3">课程内容</h1>
+        <h1 className="text-4xl font-bold text-white mb-3">Curriculum</h1>
         <p className="text-gray-400">
-          四大专题：MicroGPT · Agent 构建原则 · 设计模式 · 真实面试题库
+          Four tracks: MicroGPT · Agent Principles · Design Patterns · Real Interviews
           {!session && (
             <span className="ml-2 text-blue-400">
-              — <Link href="/register" className="underline">免费注册</Link> 解锁免费内容
+              — <Link href="/register" className="underline">Sign up free</Link> to unlock free content
             </span>
           )}
           {session && !isPro && (
             <span className="ml-2 text-yellow-400">
-              — <Link href="/pricing" className="underline">升级 Pro</Link> 解锁全部内容
+              — <Link href="/pricing" className="underline">Upgrade to Pro</Link> to unlock everything
             </span>
           )}
         </p>
@@ -41,7 +41,7 @@ export default async function LearnPage({
             !params.section ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-400 hover:text-white'
           }`}
         >
-          全部
+          All
         </Link>
         {sections.map((s) => (
           <Link
@@ -89,7 +89,7 @@ export default async function LearnPage({
                         </h3>
                         <div className="flex items-center gap-2 shrink-0">
                           {article.video && (
-                            <span className="text-xs text-purple-400" title="包含视频">🎬</span>
+                            <span className="text-xs text-purple-400" title="Includes video">🎬</span>
                           )}
                           {article.isPremium ? (
                             <span className="text-xs bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 text-yellow-400 px-2 py-0.5 rounded-full">
@@ -97,7 +97,7 @@ export default async function LearnPage({
                             </span>
                           ) : (
                             <span className="text-xs bg-green-500/10 border border-green-500/20 text-green-400 px-2 py-0.5 rounded-full">
-                              免费
+                              Free
                             </span>
                           )}
                           {isLocked && <span className="text-gray-500">🔒</span>}
@@ -105,7 +105,7 @@ export default async function LearnPage({
                       </div>
                       <p className="text-gray-500 text-sm mb-3 leading-relaxed">{article.excerpt}</p>
                       <div className="flex items-center gap-3 text-xs text-gray-600 flex-wrap">
-                        <span>⏱ {article.readingTime} 分钟</span>
+                        <span>⏱ {article.readingTime} min read</span>
                         {article.series && (
                           <span className="text-blue-500/70">📂 {article.series}</span>
                         )}

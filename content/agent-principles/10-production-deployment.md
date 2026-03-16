@@ -1,6 +1,6 @@
 ---
-title: "将 AI Agent 部署到生产环境"
-excerpt: "监控、扩展、成本控制——将 Agent 从原型变为可靠的生产服务。"
+title: "Deploying AI Agents to Production"
+excerpt: "Observability, resilience, cost control, and scaling — everything you need to take an agent from prototype to reliable production service."
 isPremium: true
 order: 10
 readingTime: 20
@@ -8,17 +8,17 @@ tags: ["production", "deployment", "monitoring", "docker"]
 video: "https://www.youtube.com/embed/dQw4w9WgXcQ"
 ---
 
-# 将 AI Agent 部署到生产环境
+# Deploying AI Agents to Production
 
-## 生产环境的挑战
+## The Production Challenges
 
-1. **可靠性**：处理 LLM API 失败、超时、限流
-2. **可观测性**：记录每一步的执行，便于调试
-3. **成本控制**：LLM 调用费用可能失控
-4. **扩展性**：支持并发请求
-5. **安全性**：防止 Prompt Injection 等攻击
+1. **Reliability**: Handling LLM API failures, timeouts, and rate limits
+2. **Observability**: Logging every step for debugging and auditing
+3. **Cost control**: LLM call costs can spiral without guardrails
+4. **Scalability**: Supporting concurrent requests
+5. **Security**: Preventing prompt injection and other attacks
 
-## 1. 可靠性：重试和熔断
+## 1. Reliability: Retries and Circuit Breakers
 
 ```python
 from tenacity import retry, stop_after_attempt, wait_exponential
@@ -39,11 +39,11 @@ class ResilientLLMClient:
             )
             return response.choices[0].message.content
         except openai.RateLimitError:
-            await asyncio.sleep(60)  # 等待限流恢复
+            await asyncio.sleep(60)  # back off during rate limiting
             raise
 ```
 
-## 2. 可观测性：追踪每一步
+## 2. Observability: Trace Every Step
 
 ```python
 from opentelemetry import trace
@@ -58,97 +58,100 @@ class TracedAgent:
 
             steps = []
             async for step in self.agent.stream(goal):
-                step_data = {
-                    "type": step.type,
-                    "tokens_used": step.tokens,
-                    "cost_usd": step.cost,
-                    "duration_ms": step.duration_ms
-                }
-                steps.append(step_data)
-                span.add_event(f"step.{step.type}", step_data)
+                span.add_event("step", {
+                    "thought": step.thought,
+                    "action": step.action,
+                    "observation": step.observation[:200],
+                })
+                steps.append(step)
 
-            span.set_attribute("total_cost_usd", sum(s["cost_usd"] for s in steps))
+            span.set_attribute("total_steps", len(steps))
+            return steps[-1].result
 ```
 
-## 3. 成本控制
+## 3. Cost Control
 
 ```python
 class CostAwareAgent:
-    def __init__(self, budget_usd: float = 1.0):
+    def __init__(self, budget_usd: float = 0.10):
         self.budget = budget_usd
         self.spent = 0.0
 
-    def select_model(self, task_complexity: str) -> str:
-        """根据任务复杂度选择最经济的模型"""
-        models = {
-            "simple": "gpt-4o-mini",      # $0.15/1M tokens
-            "medium": "gpt-4o",            # $2.50/1M tokens
-            "complex": "claude-opus-4-6",  # $15/1M tokens
-        }
-        return models.get(task_complexity, "gpt-4o-mini")
+    def _estimate_cost(self, prompt_tokens: int, completion_tokens: int) -> float:
+        # GPT-4o pricing (approximate)
+        return (prompt_tokens * 0.000005) + (completion_tokens * 0.000015)
+
+    async def complete(self, messages: list) -> str:
+        cost = self._estimate_cost(
+            count_tokens(messages),
+            estimated_completion_tokens=500
+        )
+
+        if self.spent + cost > self.budget:
+            raise BudgetExceededError(
+                f"Would exceed budget: ${self.spent:.4f} spent, ${self.budget:.2f} limit"
+            )
+
+        response = await self.llm.complete(messages)
+        self.spent += self._estimate_cost(
+            response.usage.prompt_tokens,
+            response.usage.completion_tokens
+        )
+        return response.content
 ```
 
-## 4. Docker 部署
+## 4. Security: Prompt Injection Defense
 
-```dockerfile
-FROM python:3.11-slim
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-COPY src/ ./src/
+```python
+def sanitize_user_input(user_input: str) -> str:
+    """Remove common prompt injection patterns."""
+    injection_patterns = [
+        r"ignore (all |previous |above )?instructions",
+        r"you are now",
+        r"new (system )?prompt",
+        r"forget (everything|all)",
+    ]
 
-HEALTHCHECK --interval=30s --timeout=10s \
-  CMD curl -f http://localhost:8000/health || exit 1
+    for pattern in injection_patterns:
+        if re.search(pattern, user_input, re.IGNORECASE):
+            raise SecurityError(f"Potential prompt injection detected: {user_input[:100]}")
 
-EXPOSE 8000
-CMD ["uvicorn", "src.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    return user_input
+
+class SecureAgent:
+    def run(self, user_input: str) -> str:
+        clean_input = sanitize_user_input(user_input)
+
+        # Separate system and user contexts — never interpolate user input into system prompt
+        messages = [
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": clean_input}
+        ]
+        return self.llm.complete(messages)
 ```
+
+## 5. Deployment Architecture
 
 ```yaml
 # docker-compose.yml
 services:
   agent-api:
-    build: .
-    ports: ["8000:8000"]
+    image: agent-service:latest
+    replicas: 3
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
-    deploy:
-      replicas: 3
-      resources:
-        limits:
-          memory: 512M
+      - REDIS_URL=redis://cache:6379
+    depends_on: [cache, db]
 
-  redis:
-    image: redis:alpine
+  cache:
+    image: redis:7-alpine  # for tool result caching
+
+  db:
+    image: postgres:15
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  otel-collector:
+    image: otel/opentelemetry-collector
+    # collect traces, metrics, logs
 ```
-
-## 5. 安全：防御 Prompt Injection
-
-```python
-class SecureAgent:
-    INJECTION_PATTERNS = [
-        r"ignore previous instructions",
-        r"forget your system prompt",
-        r"act as a different AI",
-        r"jailbreak",
-    ]
-
-    def sanitize_input(self, user_input: str) -> str:
-        import re
-        for pattern in self.INJECTION_PATTERNS:
-            if re.search(pattern, user_input, re.IGNORECASE):
-                raise SecurityError("检测到潜在的 Prompt Injection 攻击")
-        # 严格封装用户输入
-        return f"<user_input>{user_input}</user_input>"
-```
-
-## 生产 Checklist
-
-- [ ] LLM 调用重试机制（tenacity）
-- [ ] 请求超时控制
-- [ ] 成本追踪和预算告警
-- [ ] 结构化日志（JSON）
-- [ ] 分布式追踪（OpenTelemetry）
-- [ ] 健康检查端点
-- [ ] Prompt Injection 防御
-- [ ] API 密钥轮换机制

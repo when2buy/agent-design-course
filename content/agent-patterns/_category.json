@@ -1,6 +1,6 @@
 {
   "name": "Agent Design Patterns",
-  "description": "场景化的 Agent 架构设计：CLI Agent、Personal Assistant、Data Pipeline、Code Review Bot……类比传统 System Design，每个 Pattern 对应真实工程场景",
+  "description": "Scenario-driven architecture: CLI Agent, Personal Assistant, Data Pipeline, Code Review Bot — system design for the AI era",
   "icon": "🏗️",
   "order": 3
 }

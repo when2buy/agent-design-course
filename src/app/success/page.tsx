@@ -20,10 +20,10 @@ export default async function SuccessPage({
           </svg>
         </div>
 
-        <h1 className="text-3xl font-bold text-white mb-3">订阅成功！🎉</h1>
-        <p className="text-gray-400 mb-2">欢迎加入 Pro 会员，感谢你的支持！</p>
+        <h1 className="text-3xl font-bold text-white mb-3">You&apos;re Pro now! 🎉</h1>
+        <p className="text-gray-400 mb-2">Welcome to Pro — thanks for your support!</p>
         <p className="text-gray-500 text-sm mb-10">
-          你现在可以访问全部 Premium 内容、视频讲解和代码示例。
+          You now have full access to all premium articles, video walkthroughs, and interview solutions.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -31,18 +31,18 @@ export default async function SuccessPage({
             href="/learn"
             className="bg-blue-600 hover:bg-blue-500 text-white px-8 py-3 rounded-xl font-semibold transition-all"
           >
-            开始学习 →
+            Start Learning →
           </Link>
           <Link
             href="/dashboard"
             className="border border-gray-700 hover:border-gray-500 text-gray-300 hover:text-white px-8 py-3 rounded-xl font-semibold transition-all"
           >
-            进入控制台
+            Go to Dashboard
           </Link>
         </div>
 
         <p className="text-gray-600 text-xs mt-8">
-          订阅确认邮件已发送到你的邮箱。如有问题请联系客服。
+          A confirmation email has been sent to your inbox. Contact us if you have any questions.
         </p>
       </div>
     </div>

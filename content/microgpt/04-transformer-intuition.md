@@ -1,25 +1,25 @@
 ---
-title: "Transformer 直觉：Self-Attention 到底在做什么"
-excerpt: "不推公式，只讲直觉。Attention 机制其实是在问「这个词和其他哪些词最相关？」本文用信息检索的视角，让你真正理解 Transformer 的核心思想。"
+title: "Transformer Intuition: What Self-Attention Is Actually Doing"
+excerpt: "No math, just intuition. The Attention mechanism is essentially asking 'which other words is this word most related to?' This article uses an information-retrieval lens to make Transformers genuinely click."
 isPremium: false
 order: 4
 readingTime: 12
 tags: ["transformer", "attention", "llm-basics", "microgpt"]
 ---
 
-# Transformer 直觉：Self-Attention 到底在做什么
+# Transformer Intuition: What Self-Attention Is Actually Doing
 
-> 🚧 **内容即将上线** — 本文正在撰写中，敬请期待。
+> 🚧 **Coming soon** — This article is being written. Check back shortly!
 
-## 预告内容
+## What's Inside
 
-- 从 RNN 的问题说起：为什么需要 Attention
-- Self-Attention 的直觉：Query、Key、Value 的类比
-- 多头注意力：为什么要「多头」
-- 位置编码：让模型知道词的顺序
-- Layer Norm、FFN 各有什么用？
-- 从 Transformer 到 GPT：Decoder-only 架构的选择
+- Why RNNs weren't good enough — the motivation for Attention
+- Self-Attention intuition: Query, Key, Value as a retrieval system
+- Multi-head attention: why multiple heads?
+- Positional encoding: telling the model about word order
+- What Layer Norm and FFN are actually for
+- From Transformer to GPT: why decoder-only?
 
 ---
 
-*想优先看到这篇文章？在下方留言告诉我们！*
+*Want this article sooner? Let us know in the comments!*

@@ -1,6 +1,6 @@
 ---
-title: "Agent 记忆系统设计"
-excerpt: "构建高效的 Agent 记忆架构：工作记忆、情节记忆、语义记忆的设计与实现。"
+title: "Agent Memory System Design"
+excerpt: "Building an effective agent memory architecture: working memory, episodic memory, semantic memory — design patterns and implementation."
 isPremium: true
 order: 5
 readingTime: 14
@@ -8,17 +8,17 @@ tags: ["memory", "vector-db", "rag"]
 video: "https://www.youtube.com/embed/dQw4w9WgXcQ"
 ---
 
-# Agent 记忆系统设计
+# Agent Memory System Design
 
-## 为什么记忆对 Agent 至关重要
+## Why Memory Is Critical
 
-没有记忆的 Agent 就像患了失忆症的人——每次对话都从零开始，无法积累知识，无法学习用户偏好，无法处理长期任务。
+An agent without memory is like a person with amnesia — every conversation starts from scratch. No accumulated knowledge, no user preferences, no long-running task state.
 
-## 记忆的四种类型
+## The Four Types of Memory
 
-### 1. 工作记忆（Working Memory）
+### 1. Working Memory
 
-存储在 LLM 的 context window 中的当前任务上下文：
+The current task context stored in the LLM's context window:
 
 ```python
 class WorkingMemory:
@@ -31,14 +31,14 @@ class WorkingMemory:
         self._trim_if_needed()
 
     def _trim_if_needed(self):
+        # Drop oldest non-system messages to stay within the token budget
         while count_tokens(self.messages) > self.max_tokens and len(self.messages) > 2:
-            # 删除最早的非系统消息，保留系统提示和最近上下文
             self.messages.pop(1)
 ```
 
-### 2. 情节记忆（Episodic Memory）
+### 2. Episodic Memory
 
-过去对话的摘要，用于恢复上下文：
+Summaries of past conversations that allow context to be restored:
 
 ```python
 class EpisodicMemory:
@@ -59,9 +59,9 @@ class EpisodicMemory:
         )
 ```
 
-### 3. 语义记忆（Semantic Memory）
+### 3. Semantic Memory
 
-向量数据库存储的知识库，支持语义检索：
+A vector database knowledge base that supports semantic retrieval:
 
 ```python
 from langchain.vectorstores import Chroma
@@ -82,11 +82,11 @@ class SemanticMemory:
         return [doc.page_content for doc in docs]
 ```
 
-### 4. 程序记忆（Procedural Memory）
+### 4. Procedural Memory
 
-Agent 学会的操作步骤，固化在 system prompt 或代码中。
+Learned operating procedures, baked into the system prompt or code. Stable patterns the agent always follows.
 
-## 完整记忆系统
+## Complete Memory System
 
 ```python
 class AgentMemory:
@@ -99,30 +99,34 @@ class AgentMemory:
         relevant = self.semantic.recall(current_query, k=3)
         recent = self.episodic.recall_recent(n=3)
 
-        return f"""## 相关记忆
+        return f"""## Relevant Memories
 {chr(10).join(relevant)}
 
-## 最近对话
+## Recent Sessions
 {chr(10).join(recent)}"""
 
     def save_session(self, messages: list):
         summary = llm.summarize(messages)
         key_facts = llm.extract_facts(messages)
-        self.episodic.store_episode(session_id=str(uuid4()), summary=summary, key_facts=key_facts)
+        self.episodic.store_episode(
+            session_id=str(uuid4()),
+            summary=summary,
+            key_facts=key_facts
+        )
         for fact in key_facts:
             self.semantic.remember(fact)
 ```
 
-## 记忆压缩策略
+## Memory Compression
 
-随时间增长的记忆需要定期压缩：
+As memories accumulate, they need periodic compression:
 
 ```python
 def compress_memories(memories: list, llm) -> str:
-    prompt = f"""将以下记忆条目压缩为简洁摘要，保留最重要的信息：
+    prompt = f"""Compress the following memory entries into a concise summary, preserving the most important information:
 
 {chr(10).join(memories)}
 
-压缩摘要："""
+Compressed summary:"""
     return llm.complete(prompt)
 ```

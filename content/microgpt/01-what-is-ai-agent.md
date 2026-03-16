@@ -1,6 +1,6 @@
 ---
-title: "什么是 AI Agent？"
-excerpt: "深入理解 AI Agent 的定义、特征和与普通 LLM 的本质区别。"
+title: "What is an AI Agent?"
+excerpt: "A deep dive into the definition, characteristics, and fundamental difference between an AI Agent and a plain LLM."
 isPremium: false
 order: 1
 readingTime: 8
@@ -8,41 +8,41 @@ tags: ["basics", "agent", "llm"]
 video: "https://www.youtube.com/embed/dQw4w9WgXcQ"
 ---
 
-# 什么是 AI Agent？
+# What is an AI Agent?
 
-## 核心定义
+## Core Definition
 
-AI Agent 是一种能够**感知环境、做出决策、执行动作**的智能系统。与传统的 LLM 不同，Agent 不只是"回答问题"，而是能够主动地去**完成目标**。
+An AI Agent is an intelligent system capable of **perceiving its environment, making decisions, and executing actions**. Unlike a plain LLM, an Agent doesn't just "answer questions" — it actively works to **accomplish goals**.
 
 ```
-用户输入目标 → Agent 规划 → 执行工具 → 观察结果 → 调整计划 → 完成目标
+User sets goal → Agent plans → Executes tools → Observes results → Adjusts plan → Goal achieved
 ```
 
-## Agent vs 普通 LLM 的区别
+## Agent vs. Plain LLM
 
-| 特性 | 普通 LLM | AI Agent |
-|------|----------|----------|
-| 交互方式 | 单轮问答 | 多轮自主循环 |
-| 工具使用 | 无 | 可调用外部工具 |
-| 记忆 | 无持久记忆 | 有短期/长期记忆 |
-| 主动性 | 被动响应 | 主动规划执行 |
+| Property | Plain LLM | AI Agent |
+|----------|-----------|----------|
+| Interaction | Single-turn Q&A | Multi-turn autonomous loop |
+| Tool use | None | Can call external tools |
+| Memory | No persistent memory | Short-term + long-term memory |
+| Initiative | Passive responder | Active planner & executor |
 
-## Agent 的核心组件
+## Core Components of an Agent
 
-### 1. 大脑（LLM）
-Agent 的推理核心，负责理解任务、规划步骤、决策下一步行动。
+### 1. Brain (LLM)
+The reasoning core — understands tasks, plans steps, and decides what to do next.
 
-### 2. 工具（Tools）
-Agent 可以调用的外部能力：搜索引擎、代码执行、API 调用、数据库查询等。
+### 2. Tools
+External capabilities the agent can invoke: web search, code execution, API calls, database queries, etc.
 
-### 3. 记忆（Memory）
-- **短期记忆**：当前对话上下文（Context Window）
-- **长期记忆**：向量数据库存储的历史信息
+### 3. Memory
+- **Short-term**: The current conversation context (context window)
+- **Long-term**: Historical information stored in a vector database
 
-### 4. 规划（Planning）
-Agent 如何分解复杂任务、制定执行计划。
+### 4. Planning
+How the agent decomposes complex tasks and forms an execution plan.
 
-## 第一个 Agent 示例
+## Your First Agent
 
 ```python
 from langchain.agents import initialize_agent, Tool
@@ -51,22 +51,22 @@ tools = [
     Tool(
         name="Search",
         func=search.run,
-        description="用于搜索互联网信息"
+        description="Search the internet for up-to-date information"
     ),
     Tool(
         name="Calculator",
         func=calculator.run,
-        description="用于数学计算"
+        description="Perform mathematical calculations"
     )
 ]
 
 llm = OpenAI(temperature=0)
 agent = initialize_agent(tools, llm, agent="zero-shot-react-description")
 
-result = agent.run("特斯拉当前股价是多少？如果我买100股需要多少钱？")
+result = agent.run("What is Tesla's current stock price? How much would 100 shares cost?")
 print(result)
 ```
 
-## 下一步
+## What's Next
 
-理解了基础定义后，下一节我们将深入了解 **Agent Loop**，这是 Agent 工作的核心引擎。
+Now that you understand the core definition, the next article dives into the **Agent Loop** — the engine that makes autonomous execution possible.

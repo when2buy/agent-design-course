@@ -1,6 +1,6 @@
 {
-  "name": "MicroGPT：AI 基本原理",
-  "description": "从第一性原理理解大语言模型与 AI Agent 的运作机制，不需要数学博士，只需要好奇心",
+  "name": "MicroGPT: How AI Works",
+  "description": "Understand large language models and AI Agents from first principles — no math PhD required, just curiosity",
   "icon": "🧬",
   "order": 1
 }

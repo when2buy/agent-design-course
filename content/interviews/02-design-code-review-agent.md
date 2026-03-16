@@ -1,38 +1,38 @@
 ---
-title: "[系统设计] 设计一个自动 Code Review Agent"
-excerpt: "来自 GitHub / Anthropic 的高频题。Agent 需要理解 PR diff、调用静态分析工具、生成结构化评论，并能识别安全漏洞。本文提供完整架构 + 工具链设计。"
+title: "[System Design] Design an Automated Code Review Agent"
+excerpt: "A high-frequency question from GitHub and Anthropic. The agent must understand PR diffs, invoke static analysis tools, generate structured comments, and identify security vulnerabilities. Full architecture and tool chain design included."
 isPremium: true
 order: 2
 readingTime: 22
 tags: ["interview", "system-design", "code-review", "devtools"]
-company: "GitHub / Anthropic（变体）"
+company: "GitHub / Anthropic (variant)"
 difficulty: "Medium"
-series: "系统设计题"
+series: "System Design"
 ---
 
-# [系统设计] 设计一个自动 Code Review Agent
+# [System Design] Design an Automated Code Review Agent
 
-> 🔒 **PRO 内容** — 升级 Pro 解锁完整设计方案与评分标准。
+> 🔒 **PRO Content** — Upgrade to Pro to unlock the full design walkthrough and scoring rubric.
 
-## 题目原文
+## The Question
 
-> "请设计一个 AI Code Review Agent，接入 GitHub PR 流程，要求：
-> - 自动分析 PR diff，生成 inline review comments
-> - 能调用 linter、SAST 工具等静态分析结果作为上下文
-> - 能识别常见安全漏洞（SQL 注入、XSS、敏感信息泄露）
-> - Review 结果需有解释，不能只说「这里有问题」
-> - 支持 10 个并发 PR，延迟 < 60 秒
+> "Design an AI Code Review Agent integrated into the GitHub PR workflow:
+> - Automatically analyzes PR diffs and generates inline review comments
+> - Can call linters and SAST tools, incorporating their output as context
+> - Identifies common security vulnerabilities (SQL injection, XSS, secret leakage)
+> - Review comments must include explanations — not just 'there's a problem here'
+> - Supports 10 concurrent PRs with end-to-end latency under 60 seconds
 >
-> 请描述架构，并重点讲清楚 Agent 的 Tool 设计和 Prompt 策略。"
+> Describe your architecture with emphasis on tool design and prompting strategy."
 
 ---
 
-## 考察维度（考官视角）
+## What Interviewers Are Testing
 
-1. **工具设计**：如何把 diff 切片成 Agent 能处理的粒度？
-2. **上下文管理**：大型 PR 的 diff 会超出 context window，如何处理？
-3. **多工具协调**：linter 结果、SAST 结果、代码本身如何融合？
-4. **输出格式控制**：如何确保输出是结构化的 GitHub review comment 格式？
-5. **安全识别**：Agent 是否能真正"理解"安全漏洞，还是只是模板匹配？
+1. **Tool design**: How do you chunk diffs into pieces the agent can process?
+2. **Context management**: Large PRs may overflow the context window — how do you handle that?
+3. **Multi-tool coordination**: How do you combine linter output, SAST results, and source code?
+4. **Output format control**: How do you guarantee the output is valid GitHub review comment JSON?
+5. **Security understanding**: Can the agent truly *understand* vulnerabilities, or is it pattern-matching?
 
-> 完整方案、架构图、Prompt 设计见 PRO 内容 👆
+> Full solution, architecture diagram, and prompt design in PRO content 👆

@@ -1,52 +1,51 @@
 ---
-title: "真实面试题库：总览"
-excerpt: "收录来自 OpenAI、Anthropic、Google DeepMind、Meta AI、Cohere、Mistral 等公司的真实 Agent 相关面试题，覆盖系统设计、原理理解、Coding 三类题型。"
+title: "Interview Question Bank: Overview"
+excerpt: "Real agent design questions from OpenAI, Anthropic, Google DeepMind, Meta AI, Cohere, and Mistral — spanning system design, conceptual understanding, and coding challenges."
 isPremium: false
 order: 0
 readingTime: 5
 tags: ["interview", "overview", "system-design", "ai-engineer"]
 ---
 
-# 真实面试题库：总览
+# Interview Question Bank: Overview
 
-这是本课程**最核心**的部分。
+This is the most important section of the course.
 
-市面上 AI 面试资料要么太浅（背定义），要么太学术（推公式）。
-这里我们只关注一件事：**在真实面试中，考官想看什么？**
-
----
-
-## 题库结构
-
-### 🏢 公司分类
-
-| 公司 | 题型侧重 | 开放状态 |
-|------|----------|----------|
-| OpenAI | Agent 系统设计、Safety 场景 | PRO |
-| Anthropic | Constitutional AI、Tool Use 设计 | PRO |
-| Google DeepMind | 多 Agent 协调、分布式推理 | PRO |
-| Meta AI | 大规模 RAG、低延迟推理 | PRO |
-| 初创公司（综合） | 全栈 Agent 工程、快速 MVP | PRO |
-
-### 📂 题型分类
-
-**1. 系统设计题**（最常见）
-> "设计一个能自动处理客服工单的 Agent 系统，要求支持 10 万日活"
-
-**2. 原理理解题**
-> "解释 ReAct 和 Plan-and-Execute 的本质区别，各自适合什么场景"
-
-**3. Coding 题**
-> "实现一个支持 timeout 和 retry 的 Tool 调用封装"
+Most AI interview prep resources are either too shallow (memorizing definitions) or too academic (deriving formulas). We focus on one thing: **what do interviewers actually want to see?**
 
 ---
 
-## 如何使用这个题库
+## How the Question Bank Is Organized
 
-1. **先独立思考**：每道题先自己设计 10 分钟
-2. **对照参考方案**：重点看"为什么这样设计"，而不是"答案是什么"
-3. **注意评分标准**：每题附有考官视角的评分维度
+### 🏢 By Company
+
+| Company | Focus Areas | Access |
+|---------|-------------|--------|
+| OpenAI | Agent system design, safety scenarios | PRO |
+| Anthropic | Constitutional AI, tool use architecture | PRO |
+| Google DeepMind | Multi-agent coordination, distributed inference | PRO |
+| Meta AI | Large-scale RAG, low-latency inference | PRO |
+| Startups (combined) | Full-stack agent engineering, rapid MVP | PRO |
+
+### 📂 By Question Type
+
+**1. System Design** (most common)
+> "Design an agent system that automatically handles support tickets, targeting 100k DAU."
+
+**2. Conceptual Understanding**
+> "Explain the essential difference between ReAct and Plan-and-Execute. When do you use each?"
+
+**3. Coding**
+> "Implement a tool-call wrapper with timeout and retry support."
 
 ---
 
-> 🔑 **解锁全部题库** — 升级 Pro 即可访问所有真实面试题与完整设计方案。
+## How to Use This Bank
+
+1. **Think first**: give yourself 10 minutes before looking at the solution
+2. **Study the reasoning**: focus on *why* a design decision was made, not just *what* it is
+3. **Check the rubric**: each question includes the examiner's scoring dimensions
+
+---
+
+> 🔑 **Unlock the full bank** — Upgrade to Pro to access all real interview questions and complete solution walkthroughs.

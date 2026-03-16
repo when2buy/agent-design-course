@@ -1,25 +1,25 @@
 ---
-title: "Skill System：按需加载的 Agent 能力包"
-excerpt: "Skills 不是工具，也不是 Prompt——它是把工具、上下文、指令打包成可插拔能力模块的设计模式。本文介绍 Skill 的设计哲学、目录结构与动态加载机制。"
+title: "Skill Systems: Pluggable Capability Bundles for Agents"
+excerpt: "A Skill isn't a tool and it isn't a prompt — it's a design pattern that bundles tools, context, and instructions into a hot-swappable capability module. This article covers the philosophy, directory structure, and dynamic loading mechanism."
 isPremium: false
 order: 4
 readingTime: 12
 tags: ["skill", "modularity", "agent-design", "prompt-engineering"]
 ---
 
-# Skill System：按需加载的 Agent 能力包
+# Skill Systems: Pluggable Capability Bundles for Agents
 
-> 🚧 **内容即将上线** — 本文正在撰写中，敬请期待。
+> 🚧 **Coming soon** — This article is being written. Check back shortly!
 
-## 预告内容
+## What's Inside
 
-- 什么是 Skill，它与 Tool、Plugin 的区别
-- Skill 的典型目录结构：SKILL.md + scripts/ + references/
-- 动态加载：Agent 如何在运行时决定读取哪个 Skill
-- 实战：为 Agent 写一个 GitHub Skill
-- Skill vs RAG：什么时候用哪个？
-- OpenClaw 的 Skill 系统设计解析
+- What a Skill is — and how it differs from a Tool or Plugin
+- Canonical Skill directory structure: `SKILL.md` + `scripts/` + `references/`
+- Dynamic loading: how an agent decides which Skill to read at runtime
+- Hands-on: write a GitHub Skill for an agent
+- Skill vs RAG: when to use which approach
+- The OpenClaw Skill system design, dissected
 
 ---
 
-*想优先看到这篇文章？在下方留言告诉我们！*
+*Want this article sooner? Let us know in the comments!*
