@@ -1,10 +1,5 @@
 'use client'
-import dynamic from 'next/dynamic'
-
-const TrainingCanvas = dynamic(() => import('../TrainingCanvas'), {
-  ssr: false,
-  loading: () => <div className="animate-pulse bg-gray-800/50 rounded-2xl border border-gray-700 h-96" />
-})
+import TrainingCanvas from '../TrainingCanvas'
 
 function Callout({ type, children }: { type: 'info' | 'code' | 'key'; children: React.ReactNode }) {
   const styles = {
