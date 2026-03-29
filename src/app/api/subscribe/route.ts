@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
-import { prisma } from '@/lib/db'
+import { updateUser } from '@/lib/db'
 
 export async function POST(req: NextRequest) {
   const session = await auth()
@@ -19,12 +19,9 @@ export async function POST(req: NextRequest) {
   const endsAt = new Date()
   endsAt.setFullYear(endsAt.getFullYear() + 1)
 
-  await prisma.user.update({
-    where: { id: session.user.id },
-    data: {
-      subscriptionStatus: 'pro',
-      subscriptionEndsAt: endsAt,
-    },
+  await updateUser(session.user.id, {
+    subscriptionStatus: 'pro',
+    subscriptionEndsAt: endsAt.toISOString(),
   })
 
   return NextResponse.json({ success: true, message: 'Subscribed! Welcome to Pro.' })

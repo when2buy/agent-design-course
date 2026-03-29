@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
-import { prisma } from '@/lib/db'
+import { listUsers, updateUser } from '@/lib/db'
 
 export async function GET(req: NextRequest) {
   const session = await auth()
@@ -8,19 +8,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
-  const users = await prisma.user.findMany({
-    select: {
-      id: true,
-      email: true,
-      name: true,
-      role: true,
-      subscriptionStatus: true,
-      subscriptionEndsAt: true,
-      createdAt: true,
-    },
-    orderBy: { createdAt: 'desc' },
-  })
-
+  const users = await listUsers()
   return NextResponse.json(users)
 }
 
@@ -32,11 +20,8 @@ export async function PATCH(req: NextRequest) {
 
   const { userId, subscriptionStatus } = await req.json()
 
-  const user = await prisma.user.update({
-    where: { id: userId },
-    data: { subscriptionStatus },
-    select: { id: true, email: true, subscriptionStatus: true },
-  })
+  const user = await updateUser(userId, { subscriptionStatus })
+  if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
-  return NextResponse.json(user)
+  return NextResponse.json({ id: user.id, email: user.email, subscriptionStatus: user.subscriptionStatus })
 }

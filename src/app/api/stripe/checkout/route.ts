@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { stripe, PLANS } from '@/lib/stripe'
-
-import { prisma } from '@/lib/db'
+import { getUserById, updateUser } from '@/lib/db'
 
 export async function POST(req: NextRequest) {
   const session = await auth()
@@ -10,7 +9,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Please sign in first' }, { status: 401 })
   }
 
-  const user = await prisma.user.findUnique({ where: { id: session.user.id } })
+  const user = await getUserById(session.user.id)
   if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
   if (user.subscriptionStatus === 'pro') {
@@ -29,10 +28,7 @@ export async function POST(req: NextRequest) {
       metadata: { userId: user.id },
     })
     customerId = customer.id
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { stripeCustomerId: customerId },
-    })
+    await updateUser(user.id, { stripeCustomerId: customerId })
   }
 
   // Create Stripe Checkout Session (Subscription mode)

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { stripe } from '@/lib/stripe'
-import { prisma } from '@/lib/db'
+import { updateUser } from '@/lib/db'
 
 export const runtime = 'nodejs'
 
@@ -68,14 +68,14 @@ export async function POST(req: NextRequest) {
 // Helpers
 // ─────────────────────────────────────────────
 
-function getPeriodEnd(sub: any): Date {
+function getPeriodEnd(sub: any): string {
   // Stripe API 2025: current_period_end may be on the subscription or item
   const ts =
     sub.current_period_end ??
     sub.items?.data?.[0]?.current_period_end ??
     Math.floor(Date.now() / 1000) + 365 * 24 * 3600
 
-  return new Date(ts * 1000)
+  return new Date(ts * 1000).toISOString()
 }
 
 async function activateSubscription(userId: string | undefined, subscriptionId: string) {
@@ -84,14 +84,11 @@ async function activateSubscription(userId: string | undefined, subscriptionId: 
   const sub = await stripe.subscriptions.retrieve(subscriptionId)
   const subAny = sub as any
 
-  await prisma.user.update({
-    where: { id: userId },
-    data: {
-      subscriptionStatus: 'pro',
-      stripeSubscriptionId: sub.id,
-      stripePriceId: sub.items.data[0]?.price.id,
-      subscriptionEndsAt: getPeriodEnd(subAny),
-    },
+  await updateUser(userId, {
+    subscriptionStatus: 'pro',
+    stripeSubscriptionId: sub.id,
+    stripePriceId: sub.items.data[0]?.price.id,
+    subscriptionEndsAt: getPeriodEnd(subAny),
   })
 
   console.log(`[Stripe] ✅ Pro activated for user ${userId}`)
@@ -103,12 +100,9 @@ async function renewSubscription(subscriptionId: string) {
   const userId = sub.metadata?.userId
   if (!userId) return
 
-  await prisma.user.update({
-    where: { id: userId },
-    data: {
-      subscriptionStatus: 'pro',
-      subscriptionEndsAt: getPeriodEnd(subAny),
-    },
+  await updateUser(userId, {
+    subscriptionStatus: 'pro',
+    subscriptionEndsAt: getPeriodEnd(subAny),
   })
 
   console.log(`[Stripe] ✅ Renewed for user ${userId}`)
@@ -120,12 +114,9 @@ async function syncSubscriptionStatus(sub: any) {
 
   const isActive = sub.status === 'active' || sub.status === 'trialing'
 
-  await prisma.user.update({
-    where: { id: userId },
-    data: {
-      subscriptionStatus: isActive ? 'pro' : 'free',
-      subscriptionEndsAt: getPeriodEnd(sub),
-    },
+  await updateUser(userId, {
+    subscriptionStatus: isActive ? 'pro' : 'free',
+    subscriptionEndsAt: getPeriodEnd(sub),
   })
 }
 
@@ -133,14 +124,11 @@ async function cancelSubscription(sub: any) {
   const userId = sub.metadata?.userId
   if (!userId) return
 
-  await prisma.user.update({
-    where: { id: userId },
-    data: {
-      subscriptionStatus: 'free',
-      stripeSubscriptionId: null,
-      stripePriceId: null,
-      subscriptionEndsAt: null,
-    },
+  await updateUser(userId, {
+    subscriptionStatus: 'free',
+    stripeSubscriptionId: null,
+    stripePriceId: null,
+    subscriptionEndsAt: null,
   })
 
   console.log(`[Stripe] ❌ Subscription cancelled for user ${userId}`)

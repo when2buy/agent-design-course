@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { stripe } from '@/lib/stripe'
-import { prisma } from '@/lib/db'
+import { getUserById } from '@/lib/db'
 
 export async function POST(req: NextRequest) {
   const session = await auth()
@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Please sign in first' }, { status: 401 })
   }
 
-  const user = await prisma.user.findUnique({ where: { id: session.user.id } })
+  const user = await getUserById(session.user.id)
   if (!user?.stripeCustomerId) {
     return NextResponse.json({ error: 'No linked Stripe account found' }, { status: 400 })
   }

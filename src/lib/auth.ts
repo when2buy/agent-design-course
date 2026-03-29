@@ -1,9 +1,7 @@
 import NextAuth from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
-import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
-
-const prisma = new PrismaClient()
+import { getUser, getUserById } from '@/lib/db'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
@@ -16,10 +14,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email as string },
-        })
-
+        const user = await getUser(credentials.email as string)
         if (!user) return null
 
         const valid = await bcrypt.compare(
@@ -47,10 +42,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       // Refresh subscription status on every request
       if (token.id) {
-        const dbUser = await prisma.user.findUnique({
-          where: { id: token.id as string },
-          select: { subscriptionStatus: true, role: true },
-        })
+        const dbUser = await getUserById(token.id as string)
         if (dbUser) {
           token.subscriptionStatus = dbUser.subscriptionStatus
           token.role = dbUser.role

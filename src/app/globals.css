@@ -95,10 +95,18 @@ body {
 }
 
 .prose-custom li {
-  margin: 0.375rem 0;
-  display: flex;
-  gap: 0.5rem;
+  margin: 0.5rem 0;
   color: #d1d5db;
+  line-height: 1.7;
+  padding-left: 0.25rem;
+}
+
+.prose-custom ul li::marker {
+  color: #6b7280;
+}
+
+.prose-custom ol li::marker {
+  color: #6b7280;
 }
 
 .prose-custom table {

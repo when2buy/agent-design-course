@@ -65,6 +65,16 @@ function useDraggable(ix: number, iy: number, id: string, onPos: (id: string, x:
   return { p, onMouseDown, ref }
 }
 
+// ─── Color themes per node ────────────────────────────────────────────────────
+const NODE_THEMES: Record<string, { bg: string; border: string; title: string }> = {
+  dataset:   { bg: 'rgba(59,130,246,0.05)',  border: '#93c5fd99', title: '#60a5fa' },
+  config:    { bg: 'rgba(139,92,246,0.05)',  border: '#c4b5fd99', title: '#a78bfa' },
+  metrics:   { bg: 'rgba(16,185,129,0.05)', border: '#6ee7b799', title: '#10b981' },
+  tokenizer: { bg: 'rgba(245,158,11,0.05)', border: '#fcd34d99', title: '#d97706' },
+  training:  { bg: 'rgba(99,102,241,0.05)', border: '#a5b4fc99', title: '#6366f1' },
+  generate:  { bg: 'rgba(244,63,94,0.05)',  border: '#fda4af99', title: '#f43f5e' },
+}
+
 // ─── Node card ─────────────────────────────────────────────────────────────────
 function Node({ id, ix, iy, w, title, onPos, children }: {
   id: string; ix: number; iy: number; w: number; title: string
@@ -72,18 +82,20 @@ function Node({ id, ix, iy, w, title, onPos, children }: {
   children: React.ReactNode
 }) {
   const { p, onMouseDown, ref } = useDraggable(ix, iy, id, onPos)
+  const theme = NODE_THEMES[id] ?? { bg: '#fff', border: '#e0e0e0', title: '#bbb' }
   return (
     <div ref={ref} onMouseDown={onMouseDown} style={{
       position: 'absolute', left: p.x, top: p.y, width: w,
-      background: '#fff', border: '1px solid #e0e0e0', borderRadius: 2,
+      background: theme.bg, border: `1px solid ${theme.border}`, borderRadius: 6,
       cursor: 'grab', userSelect: 'none', zIndex: 10,
+      boxShadow: `0 2px 8px ${theme.border}55`,
     }}>
-      <div style={{ padding: '8px 12px 6px', borderBottom: '1px solid #f0f0f0' }}>
-        <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '2.5px', color: '#ccc', textTransform: 'uppercase' }}>
+      <div style={{ padding: '7px 10px 5px', borderBottom: `1px solid ${theme.border}` }}>
+        <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '2.5px', color: theme.title, textTransform: 'uppercase' }}>
           {title}
         </span>
       </div>
-      <div style={{ padding: '10px 12px', fontSize: 11 }}>
+      <div style={{ padding: '8px 10px', fontSize: 11 }}>
         {children}
       </div>
     </div>
@@ -248,7 +260,7 @@ export default function TrainingCanvas() {
 
   return (
     <div style={{
-      position: 'relative', width: '100%', height: 580, overflow: 'hidden',
+      position: 'relative', width: '100%', height: 640, overflow: 'hidden',
       background: '#fafafa',
       backgroundImage: 'radial-gradient(circle, #e0e0e0 0.8px, transparent 0.8px)',
       backgroundSize: '20px 20px',
@@ -266,7 +278,7 @@ export default function TrainingCanvas() {
       <Wires positions={positions} tick={tick} />
 
       {/* ─── DATASET node (top-left) ─── */}
-      <Node id="dataset" ix={42} iy={52} w={260} title="Dataset" onPos={onPos}>
+      <Node id="dataset" ix={25} iy={58} w={210} title="Dataset" onPos={onPos}>
         {/* Preset dropdown */}
         <select
           value={selectedPreset}
@@ -321,7 +333,7 @@ export default function TrainingCanvas() {
       </Node>
 
       {/* ─── ARCHITECTURE node (top-center) ─── */}
-      <Node id="config" ix={332} iy={52} w={268} title="Architecture" onPos={onPos}>
+      <Node id="config" ix={262} iy={58} w={305} title="Architecture" onPos={onPos}>
         {([
           { k: 'n_embd',        label: 'embedding dim',   min: 8,   max: 64,   step: 4,   fmt: (v: number) => String(v) },
           { k: 'n_head',        label: 'attention heads', min: 1,   max: 8,    step: 1,   fmt: (v: number) => String(v) },
@@ -330,8 +342,8 @@ export default function TrainingCanvas() {
           { k: 'num_steps',     label: 'training steps',  min: 100, max: 3000, step: 100, fmt: (v: number) => String(v) },
           { k: 'learning_rate', label: 'learning rate',   min: 0.001, max: 0.1, step: 0.001, fmt: (v: number) => v.toFixed(3) },
         ] as const).map(({ k, label, min, max, step, fmt }) => (
-          <div key={k} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 5 }}>
-            <div style={{ width: 110, fontSize: 10, color: '#999', flexShrink: 0, ...mono }}>{label}</div>
+          <div key={k} style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+            <div style={{ width: 95, fontSize: 10, color: '#999', flexShrink: 0, ...mono }}>{label}</div>
             <input type="range" min={min} max={max} step={step}
               value={config[k as keyof typeof config]}
               onChange={e => setConfig(c => ({
@@ -341,7 +353,7 @@ export default function TrainingCanvas() {
               disabled={training}
               style={{ flex: 1, height: '2px', accentColor: '#999', cursor: 'pointer' }}
             />
-            <div style={{ width: 38, textAlign: 'right', fontSize: 11, color: '#333', fontWeight: 600, ...mono }}>
+            <div style={{ width: 40, textAlign: 'right', fontSize: 10, color: '#333', fontWeight: 600, ...mono }}>
               {fmt(config[k as keyof typeof config] as number)}
             </div>
           </div>
@@ -354,7 +366,7 @@ export default function TrainingCanvas() {
       </Node>
 
       {/* ─── METRICS node (top-right) ─── */}
-      <Node id="metrics" ix={632} iy={52} w={240} title="Metrics" onPos={onPos}>
+      <Node id="metrics" ix={597} iy={58} w={205} title="Metrics" onPos={onPos}>
         {lossHistory.length > 1 ? (
           <>
             <LossChart data={lossHistory} />
@@ -381,7 +393,7 @@ export default function TrainingCanvas() {
       </Node>
 
       {/* ─── TOKENIZER node (bottom-left) ─── */}
-      <Node id="tokenizer" ix={42} iy={340} w={260} title="Tokenizer" onPos={onPos}>
+      <Node id="tokenizer" ix={25} iy={400} w={210} title="Tokenizer" onPos={onPos}>
         {dataset ? (
           <>
             <div><span style={lbl}>vocab</span><span style={val}>{dataset.vocabSize} chars + BOS</span></div>
@@ -401,7 +413,7 @@ export default function TrainingCanvas() {
       </Node>
 
       {/* ─── TRAINING node (bottom-center) ─── */}
-      <Node id="training" ix={332} iy={380} w={268} title="Training" onPos={onPos}>
+      <Node id="training" ix={262} iy={428} w={305} title="Training" onPos={onPos}>
         {!training ? (
           <button onClick={startTraining} disabled={!dataset}
             style={{
@@ -446,7 +458,7 @@ export default function TrainingCanvas() {
       </Node>
 
       {/* ─── GENERATE node (bottom-right) ─── */}
-      <Node id="generate" ix={632} iy={350} w={240} title="Generate" onPos={onPos}>
+      <Node id="generate" ix={597} iy={412} w={205} title="Generate" onPos={onPos}>
         {modelReady ? (
           <>
             <div style={{ marginBottom: 8 }}>
